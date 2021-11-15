@@ -14,12 +14,17 @@ import { ApolloProvider } from '@apollo/client';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { createTheme, ThemeProvider } from '@material-ui/core/styles';
 import { ApolloGraphQLClient } from './ApolloGraphQLClient';
-import { Main } from './views/main/Main';
 import ReactDOM from 'react-dom';
 import { theme } from './theme';
 import { BrowserRouter } from 'react-router-dom';
 import './fonts.css';
+import './style.css';
 import './variables.css';
+import ReactFullpage from '@fullpage/react-fullpage';
+import { Carousel } from './views/component/carousel/Carousel';
+import { Charts } from './views/component/charts/Charts';
+import { Table } from './views/component/table/Table';
+import { Footer } from './views/footer/Footer';
 
 const baseTheme = createTheme({
     ...theme,
@@ -87,7 +92,22 @@ ReactDOM.render(
             <ThemeProvider theme={siriusWebTheme}>
                 <CssBaseline />
                 <div style={style}>
-                    <Main />
+                    <ReactFullpage
+                        navigation
+                        scrollingSpeed = {1000}
+                        scrollHorizontally = {true}
+                        sectionsColor={["#282c34", "#ff5f45", "#0798ec"]}
+                        render={() => {
+                            return (
+                                <>
+                                    <Carousel />
+                                    <Charts />
+                                    <Table  />
+                                </>
+                            );
+                        }}
+                    />
+                    <Footer />
                 </div>
             </ThemeProvider>
         </BrowserRouter>
