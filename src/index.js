@@ -1,17 +1,96 @@
-import React from 'react';
+/*******************************************************************************
+ * Copyright (c) 2019, 2021 Obeo.
+ * This program and the accompanying materials
+ * are made available under the erms of the Eclipse Public License v2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
+ *     Obeo - initial API and implementation
+ *******************************************************************************/
+import { ApolloProvider } from '@apollo/client';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import { createTheme, ThemeProvider } from '@material-ui/core/styles';
+import { ApolloGraphQLClient } from './ApolloGraphQLClient';
+import { Main } from './views/main/Main';
 import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import { theme } from './theme';
+import { BrowserRouter } from 'react-router-dom';
+import './fonts.css';
+import './variables.css';
 
-ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
+const baseTheme = createTheme({
+    ...theme,
+    palette: {
+        type: 'light',
+        primary: {
+            main: '#BE1A78',
+            dark: '#851254',
+            light: '#CB4793',
+        },
+        secondary: {
+            main: '#261E58',
+            dark: '#1A153D',
+            light: '#514B79',
+        },
+        text: {
+            primary: '#261E58',
+            disabled: '#B3BFC5',
+            hint: '#B3BFC5',
+        },
+        error: {
+            main: '#DE1000',
+            dark: '#9B0B00',
+            light: '#E43F33',
+        },
+        divider: '#B3BFC5',
+    },
+    props: {
+        MuiAppBar: {
+            color: 'secondary',
+        },
+    },
+    overrides: {
+        MuiSnackbarContent: {
+            root: {
+                backgroundColor: '#7269A4',
+            },
+        },
+    },
+});
+
+const siriusWebTheme = createTheme(
+    {
+        overrides: {
+            MuiAvatar: {
+                colorDefault: {
+                    backgroundColor: baseTheme.palette.primary.main,
+                },
+            },
+        },
+    },
+    baseTheme
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+const style = {
+    display: 'grid',
+    gridTemplateColumns: '1fr',
+    gridTemplateRows: '1fr',
+    minHeight: '100vh',
+};
+
+ReactDOM.render(
+    <ApolloProvider client={ApolloGraphQLClient}>
+        <BrowserRouter>
+            <ThemeProvider theme={siriusWebTheme}>
+                <CssBaseline />
+                <div style={style}>
+                    <Main />
+                </div>
+            </ThemeProvider>
+        </BrowserRouter>
+    </ApolloProvider>,
+    document.getElementById('root')
+);

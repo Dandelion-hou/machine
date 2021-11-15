@@ -1,0 +1,1 @@
+export const httpOrigin="http://192.168.0.1:8080";
