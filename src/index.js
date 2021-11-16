@@ -1,19 +1,5 @@
-/*******************************************************************************
- * Copyright (c) 2019, 2021 Obeo.
- * This program and the accompanying materials
- * are made available under the erms of the Eclipse Public License v2.0
- * which accompanies this distribution, and is available at
- * https://www.eclipse.org/legal/epl-2.0/
- *
- * SPDX-License-Identifier: EPL-2.0
- *
- * Contributors:
- *     Obeo - initial API and implementation
- *******************************************************************************/
-import { ApolloProvider } from '@apollo/client';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { createTheme, ThemeProvider } from '@material-ui/core/styles';
-import { ApolloGraphQLClient } from './ApolloGraphQLClient';
 import ReactDOM from 'react-dom';
 import { theme } from './theme';
 import { BrowserRouter } from 'react-router-dom';
@@ -23,15 +9,17 @@ import './variables.css';
 import ReactFullpage from '@fullpage/react-fullpage';
 import { Carousel } from './views/component/carousel/Carousel';
 import { Charts } from './views/component/charts/Charts';
-import { Table } from './views/component/table/Table';
+import { Tableview } from './views/component/Tableview/Tableview';
 import { Footer } from './views/footer/Footer';
-
+import { AxiosProvider} from 'react-axios';
+import axios from 'axios';
+import {httpOrigin} from "./config/config";
 const baseTheme = createTheme({
     ...theme,
     palette: {
         type: 'light',
         primary: {
-            main: '#BE1A78',
+            main: '#ffffff',
             dark: '#851254',
             light: '#CB4793',
         },
@@ -85,9 +73,13 @@ const style = {
     gridTemplateRows: '1fr',
     minHeight: '100vh',
 };
-
+const axiosInstance = axios.create({
+    baseURL: httpOrigin,
+    timeout: 2000,
+    headers: { 'X-Custom-Header': 'foobar' }
+});
 ReactDOM.render(
-    <ApolloProvider client={ApolloGraphQLClient}>
+    <AxiosProvider instance={axiosInstance}>
         <BrowserRouter>
             <ThemeProvider theme={siriusWebTheme}>
                 <CssBaseline />
@@ -96,13 +88,13 @@ ReactDOM.render(
                         navigation
                         scrollingSpeed = {1000}
                         scrollHorizontally = {true}
-                        sectionsColor={["#282c34", "#ff5f45", "#0798ec"]}
+                        sectionsColor={["#13181F", "#13181F", "#13181F"]}
                         render={() => {
                             return (
                                 <>
                                     <Carousel />
                                     <Charts />
-                                    <Table  />
+                                    <Tableview />
                                 </>
                             );
                         }}
@@ -111,6 +103,6 @@ ReactDOM.render(
                 </div>
             </ThemeProvider>
         </BrowserRouter>
-    </ApolloProvider>,
+    </AxiosProvider>,
     document.getElementById('root')
 );

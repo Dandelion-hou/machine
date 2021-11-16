@@ -1,6 +1,7 @@
 import gql from 'graphql-tag';
 /*
-* 轮播图
+* action:getbanner
+* 获取轮播图照片
 * */
 export const uploadProjectMutation = gql`
   mutation uploadProject($input: UploadProjectInput!) {
