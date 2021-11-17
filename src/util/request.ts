@@ -1,20 +1,32 @@
-import gql from 'graphql-tag';
+import axios from 'axios';
+import {httpOrigin} from "../config/config";
+axios.defaults.url=httpOrigin;
 /*
-* action:getbanner
-* 获取轮播图照片
+* section 1
 * */
-export const uploadProjectMutation = gql`
-  mutation uploadProject($input: UploadProjectInput!) {
-    uploadProject(input: $input) {
-      __typename
-      ... on UploadProjectSuccessPayload {
-        project {
-          id
-        }
-      }
-      ... on ErrorPayload {
-        message
-      }
-    }
-  }
-`;
+export function _getbanner(data){
+    return axios.get("/endpoints",data)
+}
+
+
+
+/*
+* section 2
+* */
+
+export function _getmachine(data){
+    return axios.get("/endpoints",data)
+}
+
+export function _getprops(data){
+    return axios.get("/endpoints",data)
+}
+
+/*
+* section 3
+* */
+export function _message(data){
+    return axios.get("/endpoints",data)
+}
+
+
