@@ -6,14 +6,7 @@ import { BrowserRouter } from 'react-router-dom';
 import './fonts.css';
 import './style.css';
 import './variables.css';
-import ReactFullpage from '@fullpage/react-fullpage';
-import { Carousel } from './views/component/carousel/Carousel';
-import { Charts } from './views/component/charts/Charts';
-import { Tableview } from './views/component/Tableview/Tableview';
-import { Footer } from './views/footer/Footer';
-import { AxiosProvider} from 'react-axios';
-import axios from 'axios';
-import {httpOrigin} from "./config/config";
+import {Main} from "./views/main/Main";
 const baseTheme = createTheme({
     ...theme,
     palette: {
@@ -34,7 +27,7 @@ const baseTheme = createTheme({
             hint: '#B3BFC5',
         },
         error: {
-            main: '#DE1000',
+            main: '#fff',
             dark: '#9B0B00',
             light: '#E43F33',
         },
@@ -62,6 +55,12 @@ const siriusWebTheme = createTheme(
                     backgroundColor: baseTheme.palette.primary.main,
                 },
             },
+            MuiBadge:{
+                badge: {
+                    color:'#fff',
+                    background:'#FF3333'
+                },
+            }
         },
     },
     baseTheme
@@ -73,36 +72,14 @@ const style = {
     gridTemplateRows: '1fr',
     minHeight: '100vh',
 };
-const axiosInstance = axios.create({
-    baseURL: httpOrigin,
-    timeout: 2000,
-    headers: { 'X-Custom-Header': 'foobar' }
-});
 ReactDOM.render(
-    <AxiosProvider instance={axiosInstance}>
         <BrowserRouter>
             <ThemeProvider theme={siriusWebTheme}>
                 <CssBaseline />
                 <div style={style}>
-                    <ReactFullpage
-                        navigation
-                        scrollingSpeed = {1000}
-                        scrollHorizontally = {true}
-                        sectionsColor={["#13181F", "#13181F", "#13181F"]}
-                        render={() => {
-                            return (
-                                <>
-                                    <Carousel />
-                                    <Charts />
-                                    <Tableview />
-                                </>
-                            );
-                        }}
-                    />
-                    <Footer />
+                    <Main />
                 </div>
             </ThemeProvider>
-        </BrowserRouter>
-    </AxiosProvider>,
+        </BrowserRouter>,
     document.getElementById('root')
 );

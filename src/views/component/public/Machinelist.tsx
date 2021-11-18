@@ -2,8 +2,8 @@ import { Link } from '@material-ui/core';
 import { makeStyles, emphasize } from '@material-ui/core/styles';
 import Tooltip from  '@material-ui/core/Tooltip';
 import Badge from  '@material-ui/core/Badge';
-import database from './database_white.png'
-import huawei from './huawei.png'
+import database from '../../../static/database_white.png'
+import huawei from '../../../static/record.png'
 const Styles = makeStyles((theme) => ({
     navbar: {
         position:"absolute",

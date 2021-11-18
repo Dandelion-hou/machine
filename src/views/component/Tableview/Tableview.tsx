@@ -17,10 +17,8 @@ import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 import LastPageIcon from '@material-ui/icons/LastPage';
 import Paper from '@material-ui/core/Paper';
-//import { grey } from '@material-ui/colors';
-import grey from "@material-ui/core/colors/grey";
-
-import { green } from '@material-ui/core/colors';
+import './tableView.css'
+import record from '../../../static/record.png'
 
 const Styles = makeStyles((theme) => ({
     page: {
@@ -47,9 +45,8 @@ const Styles = makeStyles((theme) => ({
         letterSpacing: 0,
         fontWeight: 500,
         textAlign: 'left',
-        marginBottom: '20px'
+        marginBottom: '20px',
     },
-
     tableContainer: {
 
     },
@@ -85,6 +82,11 @@ const Styles = makeStyles((theme) => ({
     },
     tablePagination: {
         color: '#fff',
+    },
+    record: {
+        width: '18px',
+        height: '18px',
+        marginRight: '15px'
     }
 }));
 
@@ -100,14 +102,25 @@ function createData(name: string, id: string, location: string, event: string, t
 
 const rows = [
     createData('SRU路由交换版', '16842753', '1/1', '低报', '警告', '2017-07-31 12：33：22'),
-    createData('SRU路由交换版', '16842753', '1/1', '低报', '警告', '2017-07-31 12：33：22'),
-    createData('SRU路由交换版', '16842753', '1/1', '低报', '警告', '2017-07-31 12：33：22'),
-    createData('SRU路由交换版', '16842753', '1/1', '低报', '警告', '2017-07-31 12：33：22'),
-    createData('SRU路由交换版', '16842753', '1/1', '低报', '警告', '2017-07-31 12：33：22'),
-    createData('SRU路由交换版', '16842753', '1/1', '低报', '警告', '2017-07-31 12：33：22'),
+    createData('SRU路由交换版', '16842754', '1/1', '低报', '警告', '2017-07-31 12：33：22'),
+    createData('SRU路由交换版', '16842755', '1/1', '低报', '警告', '2017-07-31 12：33：22'),
+    createData('SRU路由交换版', '16842756', '1/1', '低报', '警告', '2017-07-31 12：33：22'),
+    createData('SRU路由交换版', '16842757', '1/1', '低报', '警告', '2017-07-31 12：33：22'),
+    createData('SRU路由交换版', '16842758', '1/1', '低报', '警告', '2017-07-31 12：33：22'),
 
 ];
-
+function TableHeader(props) {
+    const classes = Styles();
+    const { page, rowsPerPage } = props;
+    const firstRecord = page * rowsPerPage + 1;
+    const lastRecord = rows.length > (page + 1) * rowsPerPage ? (page + 1) * rowsPerPage : rows.length;
+    return (
+        <div className={classes.tableTitle}>
+            <img src={record} alt="" className={classes.record} />
+            告警历史 | 显示第 {firstRecord} 条到第 {lastRecord} 条记录，共 {rows.length} 条记录
+        </div>
+    )
+}
 function TablePaginationActions(props) {
     const theme = useTheme();
     const { count, page, rowsPerPage, onPageChange } = props;
@@ -192,129 +205,87 @@ export default function BasicTable() {
         setPage(0);
     };
     return (
-
-        <TableContainer component={Paper} className={classes.tableContainer} >
-            <Table className={classes.table}>
-                <TableHead >
-                    <TableRow className={classes.tableHeader}>
-                        <TableCell className={classes.tableCell}>设备名称</TableCell>
-                        <TableCell align="right" className={classes.tableCell}>ID</TableCell>
-                        <TableCell align="right" className={classes.tableCell}>Location</TableCell>
-                        <TableCell align="right" className={classes.tableCell}>告警事件</TableCell>
-                        <TableCell align="right" className={classes.tableCell}>告警类型</TableCell>
-                        <TableCell align="right" className={classes.tableCell}>告警时间</TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {(rowsPerPage > 0
-                        ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                        : rows
-                    ).map((row) => (
-                        <TableRow
-                            key={row.id}
-                            className={classes.tableRow}
-                        >
-                            <TableCell component="th" scope="row" className={classes.tableCell}>
-                                {row.name}
-                            </TableCell>
-                            <TableCell align="right" className={classes.tableCell}>{row.id}</TableCell>
-                            <TableCell align="right" className={classes.tableCell}>{row.location}</TableCell>
-                            <TableCell align="right" className={classes.tableCell}>{row.event}</TableCell>
-                            <TableCell align="right" className={classes.tableCell}>{row.type}</TableCell>
-                            <TableCell align="right" className={classes.tableCell}>{row.time}</TableCell>
+        <div>
+            <TableHeader page={page} rowsPerPage={rowsPerPage} />
+            <TableContainer component={Paper} className={classes.tableContainer} >
+                <Table className={classes.table}>
+                    <TableHead >
+                        <TableRow className={classes.tableHeader}>
+                            <TableCell className={classes.tableCell}>设备名称</TableCell>
+                            <TableCell align="right" className={classes.tableCell}>ID</TableCell>
+                            <TableCell align="right" className={classes.tableCell}>Location</TableCell>
+                            <TableCell align="right" className={classes.tableCell}>告警事件</TableCell>
+                            <TableCell align="right" className={classes.tableCell}>告警类型</TableCell>
+                            <TableCell align="right" className={classes.tableCell}>告警时间</TableCell>
                         </TableRow>
-                    ))}
+                    </TableHead>
+                    <TableBody>
+                        {(rowsPerPage > 0
+                            ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                            : rows
+                        ).map((row) => (
+                            <TableRow
+                                key={row.id}
+                                className={classes.tableRow}
+                            >
+                                <TableCell component="th" scope="row" className={classes.tableCell}>
+                                    {row.name}
+                                </TableCell>
+                                <TableCell align="right" className={classes.tableCell}>{row.id}</TableCell>
+                                <TableCell align="right" className={classes.tableCell}>{row.location}</TableCell>
+                                <TableCell align="right" className={classes.tableCell}>{row.event}</TableCell>
+                                <TableCell align="right" className={classes.tableCell}>{row.type}</TableCell>
+                                <TableCell align="right" className={classes.tableCell}>{row.time}</TableCell>
+                            </TableRow>
+                        ))}
 
-                    {emptyRows > 0 && (
-                        <TableRow style={{ height: 53 * emptyRows }}>
-                            <TableCell colSpan={6} />
+                        {emptyRows > 0 && (
+                            <TableRow style={{ height: 53 * emptyRows }}>
+                                <TableCell colSpan={6} />
+                            </TableRow>
+                        )}
+                    </TableBody>
+                    <TableFooter className={classes.tableFooter}>
+                        <TableRow>
+                            <TablePagination
+                                rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
+                                colSpan={6}
+                                count={rows.length}
+                                rowsPerPage={rowsPerPage}
+                                page={page}
+                                SelectProps={{
+                                    inputProps: {
+                                        'aria-label': 'rows per page',
+                                    },
+                                    native: true,
+                                }}
+                                onPageChange={handleChangePage}
+                                onRowsPerPageChange={handleChangeRowsPerPage}
+                                ActionsComponent={TablePaginationActions}
+                                className={classes.tablePagination}
+                            />
                         </TableRow>
-                    )}
-                </TableBody>
-                <TableFooter className={classes.tableFooter}>
-                    <TableRow>
-                        <TablePagination
-                            rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
-                            colSpan={6}
-                            count={rows.length}
-                            rowsPerPage={rowsPerPage}
-                            page={page}
-                            SelectProps={{
-                                inputProps: {
-                                    'aria-label': 'rows per page',
-                                },
-                                native: true,
-                                color: "primary"
-                            }}
-                            onPageChange={handleChangePage}
-                            onRowsPerPageChange={handleChangeRowsPerPage}
-                            ActionsComponent={TablePaginationActions}
-                            className={classes.tablePagination}
-                        />
-                    </TableRow>
-                </TableFooter>
-            </Table>
-        </TableContainer>
-
+                    </TableFooter>
+                </Table>
+            </TableContainer>
+        </div>
 
     );
 }
 
-// export default function TablePagination(props) {
-//     return (
-//         <TablePagination
-//             rowsPerPageOptions={props.rowsPerPageOptions}
-//             colSpan={3}
-//             count={rows.length}
-//             rowsPerPage={rowsPerPage}
-//             page={page}
-//             SelectProps={{
-//                 inputProps: {
-//                     'aria-label': 'rows per page',
-//                 },
-//                 native: true,
-//             }}
-//             onPageChange={handleChangePage}
-//             onRowsPerPageChange={handleChangeRowsPerPage}
-//             ActionsComponent={TablePaginationActions}
-//         />
-//     )
-// }
-
-
 export const Tableview = () => {
     const classes = Styles();
     return (
-        <div className="section">
-            <div className={classes.page}>
-                <div className={classes.title}>警报历史</div>
-                <div className={classes.tableView}>
-                    <div className={classes.tableTitle}>
-                        告警历史 | 显示第 1 条到第 1 条记录，共 1234 条记录
-                    </div>
-                    <div>
-                        <BasicTable />
-                        {/* <TablePagination
-                            rowsPerPageOptions="{[5, 10, 25, { label: 'All', value: -1 }]}"
-                            colSpan="3"
-                            count={rows.length}
-                            rowsPerPage={rowsPerPage}
-                            page={page}
-                            SelectProps={{
-                                inputProps: {
-                                    'aria-label': 'rows per page',
-                                },
-                                native: true,
-                            }}
-                            onPageChange={handleChangePage}
-                            onRowsPerPageChange={handleChangeRowsPerPage}
-                            ActionsComponent={TablePaginationActions}
-                        /> */}
-                    </div>
+        <div className={classes.page}>
+            <div className={classes.title}>报警历史</div>
+            <div className={classes.tableView}>
+                {/* <div className={classes.tableTitle}>
+                    告警历史 | 显示第 1 条到第 1 条记录，共 1234 条记录
+                </div> */}
+                <div>
+                    <BasicTable />
                 </div>
             </div>
-
-
         </div>
     );
 };

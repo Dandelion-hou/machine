@@ -1,26 +1,30 @@
-
-import { Link, makeStyles, Typography } from '@material-ui/core';
-
+import { makeStyles } from '@material-ui/core';
 const useFooterStyles = makeStyles((theme) => ({
-  footer: {
+  cusfooter:{
     display: 'flex',
-    justifyContent: 'center',
-    margin: theme.spacing(2),
-    '& > *': {
-      marginLeft: theme.spacing(0.5),
-      marginRight: theme.spacing(0.5),
-    },
+    flexDirection:'column',
+    justifyContent:'center',
+    height:'140px',
+    fontFamily: 'PingFangSC-Regular',
+    color:'#999',
+    fontSize:'14px',
+    background: '#1C2128'
+  },
+  line:{
+    lineHeight:'22px',
+    margin:'0',
+    textAlign:'center',
   },
 }));
 
 export const Footer = () => {
   const classes = useFooterStyles();
   return (
-    <footer className={classes.footer}>
-      <Typography variant="caption">&copy; {new Date().getFullYear()} Obeo. Powered by </Typography>
-      <Link variant="caption" href="https://www.eclipse.org/sirius" rel="noopener noreferrer" target="_blank">
-        自定义
-      </Link>
-    </footer>
+    <div className={classes.cusfooter}>
+      <div>
+        <p className={classes.line}>Copyright&copy;上海XXXX有限公司&copy;沪ICP备11000297号-10</p>
+        <p className={classes.line}>沪ICP备11000297号-10&copy;3101010200302531010102003025</p>
+      </div>
+    </div>
   );
 };
