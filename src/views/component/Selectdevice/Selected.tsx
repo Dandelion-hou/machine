@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import Carousel from 'react-material-ui-carousel';
 import './select.css';
 import closeIcon from '../../../static/close.png';
@@ -53,7 +53,7 @@ export const Selected=(props)=>{
                 animation={'slide'}
                 indicatorIconButtonProps={{
                     style: {
-                        background: '#999',
+                        background: '#767D87',
                         height: '2px',
                         borderRadius:'0',
                         padding:'0',
@@ -93,7 +93,6 @@ export const Selected=(props)=>{
                 })}
             </Carousel>
         </div>
-
     )
 }
 

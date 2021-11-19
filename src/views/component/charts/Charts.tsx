@@ -6,6 +6,8 @@ import Box from '@material-ui/core/Box';
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
+import TextField from '@material-ui/core/TextField';
+import Autocomplete from '@material-ui/lab/Autocomplete';
 import './chart.css'
 import {Mouse} from "../public/Mouse";
 const lodash = require('lodash');//深拷贝
@@ -80,11 +82,34 @@ const Styles = makeStyles((theme) => ({
         color:'#ccc',
         fontSize:'14px',
         fontFamily:'PingFangSC-Regular',
-        marginLeft:'15px',
         fontWeight:400,
+        '& .MuiSelect-select':{
+            paddingLeft:'15px',
+        },
+        '& .MuiSelect-icon':{
+            color: '#999',
+            marginLeft: '15px'
+        }
+    },
+    autocomplete:{
+        paddingLeft:'15px',
+        '& *':{
+            color:'#ccc',
+        },
+        '& input':{
+            fontSize:'14px',
+            paddingLeft:'15px',
+            fontFamily:'PingFangSC-Regular',
+            fontWeight:400,
+        },
+
+        '& .MuiAutocomplete-inputRoot':{
+            paddingRight:'0',
+        }
+
     },
     FormControl:{
-        minWidth:'150px',
+        minWidth:'130px',
         border:'1px solid #41454C',
         borderRadius:'4px',
         marginLeft:'20px',
@@ -97,6 +122,9 @@ const Styles = makeStyles((theme) => ({
         marginTop: '7vh',
         color: '#fff',
         fontweight:'500',
+    },
+    color:{
+        color: '#fff',
     },
     container:{
         width:'81vw',
@@ -227,8 +255,21 @@ export const Charts= (props) => {
             <div className={classes.title}>设备趋势</div>
             <div className={classes.container}>
                 <div className={classes.selectcomp}>
+
+                    <FormControl className={classes.FormControl}>
+                        <Autocomplete
+                            id="grouped-demo"
+                            options={time}
+                            getOptionLabel={(option) => option.title}
+                            className={classes.autocomplete}
+                            closeIcon={null}
+                            renderInput={(params) => <TextField {...params}  className={classes.color} disabled={true} />}
+                        />
+                    </FormControl>
                     <Box sx={{ minWidth: 120 }}>
                     <FormControl className={classes.FormControl}>
+
+
                         {/*设备二级分类*/}
                         <Select
                             className={classes.select}
@@ -237,9 +278,9 @@ export const Charts= (props) => {
                             value={machineindex}
                             labelId="cate-select-id"
                             label="">
-                            {machine.map((item,index) => (
-                                <MenuItem  key={item.id} value={index}>{item.title}</MenuItem>
-                            ))}
+                                {machine.map((item,index) => (
+                                    <MenuItem  key={item.id} value={index}>{item.title}</MenuItem>
+                                ))}
                         </Select>
                     </FormControl>
                     </Box>

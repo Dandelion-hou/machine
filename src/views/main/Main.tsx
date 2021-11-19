@@ -1,5 +1,5 @@
 import ReactFullpage from '@fullpage/react-fullpage';
-import { Carousel } from '../component/carousel/Carousel';
+import { FirstCarousel } from '../component/carousel/FirstCarousel';
 import { Charts } from '../component/charts/Charts';
 import { Tableview } from '../component/Tableview/Tableview';
 import { Footer } from "../footer/Footer";
@@ -59,7 +59,7 @@ export const Main=()=>{
                         <div className="section">
                             <div className="pagecontainer section1-bg">
                                 <Nav  onSelectedChange={()=>handleSelectedChange(true)}/>
-                                <Carousel pageindex={pageindex} />
+                                <FirstCarousel pageindex={pageindex} />
                             </div>
                         </div>
                         <div className="section" >

@@ -1,5 +1,6 @@
 import { makeStyles } from '@material-ui/core/styles';
 import * as React from 'react';
+import { useEffect, useState } from "react";
 import PropTypes from 'prop-types';
 import { useTheme } from '@material-ui/core/styles';
 import Box from '@material-ui/core/Box';
@@ -17,25 +18,25 @@ import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 import LastPageIcon from '@material-ui/icons/LastPage';
 import Paper from '@material-ui/core/Paper';
-import './tableView.css'
-import record from '../../../static/record.png'
+import record from '../../../static/record.png';
+import { getMessage } from '../../../util/request'
 
 const Styles = makeStyles((theme) => ({
+
     page: {
         textAlign: 'center',
         height: '100%',
-        paddingTop: '162px',
+        paddingTop: '11vh',
         background: 'rgba(28,33,40,0.95)'
     },
     title: {
         fontSize: '36px',
         color: '#fff',
         fontweight: '500',
-
     },
     tableView: {
         marginTop: '80px',
-        width: '1529px',
+        width: '1549px',
         //textAlign: 'center',
         margin: '0 auto'
     },
@@ -48,17 +49,30 @@ const Styles = makeStyles((theme) => ({
         marginBottom: '20px',
     },
     tableContainer: {
-
+        '& .MuiTableContainer-root': {
+            height: ''
+        },
+        '& .MuiPaper-root': {
+            backgroudColor: '#282c33'
+        },
+        '& .MuiPaper-elevation1': {
+            boxShadow: 0,
+        }
+    },
+    select: {
+        '&.MuiSelect-select:not([multiple]) option': {
+            backgroundColor: '#282c33'
+        },
     },
     table: {
-        //backgroundColor: '#000',
         width: '1529px',
+        hright: '450px',
         background: '#282C33',
+
     },
     tableHeader: {
         height: '46px',
         background: 'rgba(255, 255, 255,0.05)',
-        // opacity: '0.05',
         boxShadow: '0px -1px 0px 0px rgba(65,69,76,1)',
     },
     tableRow: {
@@ -71,17 +85,33 @@ const Styles = makeStyles((theme) => ({
     },
     tableCell: {
         color: '#fff',
-        fintSize: '14px',
+        fontSize: '14px',
         textAlign: 'center',
+        borderBottom: '1px solid #838391'
     },
     tableFooter: {
+
         textAlign: 'right',
-        "&TableRow": {
+        "&. TableRow": {
             textAlign: 'right',
+        },
+        '&. tableCell': {
+            borderBottom: '1px solid #838391'
+        },
+        '& .MuiTablePagination-root:last-child': {
+            border: 0,
         }
+
     },
     tablePagination: {
         color: '#fff',
+        fontSize: '14px',
+        '& .MuiIconButton-root.Mui-disabled': {
+            color: '#fff'
+        },
+        '& .MuiSelect-select:not([multiple]) option, .MuiSelect-select:not([multiple]) optgroup': {
+            backgroundColor: '#282c33',
+        }
     },
     record: {
         width: '18px',
@@ -99,20 +129,29 @@ const Styles = makeStyles((theme) => ({
 function createData(name: string, id: string, location: string, event: string, type: string, time: string) {
     return { name, id, location, event, type, time };
 }
-
-const rows = [
-    createData('SRU路由交换版', '16842753', '1/1', '低报', '警告', '2017-07-31 12：33：22'),
-    createData('SRU路由交换版', '16842754', '1/1', '低报', '警告', '2017-07-31 12：33：22'),
-    createData('SRU路由交换版', '16842755', '1/1', '低报', '警告', '2017-07-31 12：33：22'),
-    createData('SRU路由交换版', '16842756', '1/1', '低报', '警告', '2017-07-31 12：33：22'),
-    createData('SRU路由交换版', '16842757', '1/1', '低报', '警告', '2017-07-31 12：33：22'),
-    createData('SRU路由交换版', '16842758', '1/1', '低报', '警告', '2017-07-31 12：33：22'),
-
+let rows = [
+    // {
+    //     "id": '',
+    //     "name": '',
+    //     "location": '',
+    //     "event": '',
+    //     "type": '',
+    //     "time": ''
+    // }
 ];
+// const rows = [
+//     createData('SRU路由交换版', '16842753', '1/1', '低报', '警告', '2017-07-31 12：33：22'),
+//     createData('SRU路由交换版', '16842754', '1/1', '低报', '警告', '2017-07-31 12：33：22'),
+//     createData('SRU路由交换版', '16842755', '1/1', '低报', '警告', '2017-07-31 12：33：22'),
+//     createData('SRU路由交换版', '16842756', '1/1', '低报', '警告', '2017-07-31 12：33：22'),
+//     createData('SRU路由交换版', '16842757', '1/1', '低报', '警告', '2017-07-31 12：33：22'),
+//     createData('SRU路由交换版', '16842758', '1/1', '低报', '警告', '2017-07-31 12：33：22'),
+
+// ];
 function TableHeader(props) {
     const classes = Styles();
     const { page, rowsPerPage } = props;
-    const firstRecord = page * rowsPerPage + 1;
+    const firstRecord = rows.length >= page * rowsPerPage + 1 ? page * rowsPerPage + 1 : 0;
     const lastRecord = rows.length > (page + 1) * rowsPerPage ? (page + 1) * rowsPerPage : rows.length;
     return (
         <div className={classes.tableTitle}>
@@ -187,11 +226,12 @@ TablePaginationActions.propTypes = {
 };
 
 
-export default function BasicTable() {
+export default function BasicTable(props) {
     const classes = Styles();
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
-
+    rows = props.message;
+    console.log(props.message)
     // Avoid a layout jump when reaching the last page with empty rows.
     const emptyRows =
         page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
@@ -204,6 +244,7 @@ export default function BasicTable() {
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
     };
+
     return (
         <div>
             <TableHeader page={page} rowsPerPage={rowsPerPage} />
@@ -248,7 +289,7 @@ export default function BasicTable() {
                     <TableFooter className={classes.tableFooter}>
                         <TableRow>
                             <TablePagination
-                                rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
+                                rowsPerPageOptions={[5, 10, 25, { label: 'All', value: rows.length }]}
                                 colSpan={6}
                                 count={rows.length}
                                 rowsPerPage={rowsPerPage}
@@ -273,8 +314,16 @@ export default function BasicTable() {
     );
 }
 
-export const Tableview = () => {
+export const Tableview = (props) => {
     const classes = Styles();
+    const [message, setMessage] = useState([]);
+    useEffect(() => {
+        getMessage({ id: props.machineid }).then(res => {
+            // @ts-ignore
+            setMessage(res);
+        });
+    }, [props.machineid])
+
     return (
         <div className={classes.page}>
             <div className={classes.title}>报警历史</div>
@@ -283,7 +332,7 @@ export const Tableview = () => {
                     告警历史 | 显示第 1 条到第 1 条记录，共 1234 条记录
                 </div> */}
                 <div>
-                    <BasicTable />
+                    <BasicTable message={message} />
                 </div>
             </div>
         </div>

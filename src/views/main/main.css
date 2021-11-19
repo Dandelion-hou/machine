@@ -11,6 +11,9 @@
 .pagecontainer{
     height: 100vh;
 }
+.section1-bg{
+    background-image: linear-gradient(1deg, #3B3F46 0%, #373B42 5%, #13181F 58%);
+}
 .section2-bg{
     background-image: linear-gradient(1deg, #13181F 0%, #13181F 58%);
 }

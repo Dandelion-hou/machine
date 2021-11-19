@@ -3,7 +3,7 @@ import mouseIcon from '../../../static/ic_mouse.png';
 const useFooterStyles = makeStyles((theme) => ({
     mousecontainer:{
         position: 'absolute',
-        bottom:'-10px',
+        bottom:'-12px',
         left:'49vw',
         width:'20px',
         height:'32px'

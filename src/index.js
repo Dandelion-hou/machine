@@ -3,10 +3,10 @@ import { createTheme, ThemeProvider } from '@material-ui/core/styles';
 import ReactDOM from 'react-dom';
 import { theme } from './theme';
 import { BrowserRouter } from 'react-router-dom';
+import {Main} from "./views/main/Main";
 import './fonts.css';
 import './style.css';
 import './variables.css';
-import {Main} from "./views/main/Main";
 const baseTheme = createTheme({
     ...theme,
     palette: {
@@ -17,7 +17,7 @@ const baseTheme = createTheme({
             light: '#CB4793',
         },
         secondary: {
-            main: '#261E58',
+            main: '#44E7D5',
             dark: '#1A153D',
             light: '#514B79',
         },
@@ -39,32 +39,14 @@ const baseTheme = createTheme({
         },
     },
     overrides: {
-        MuiSnackbarContent: {
-            root: {
-                backgroundColor: '#7269A4',
+        MuiAvatar: {
+            colorDefault: {
+                backgroundColor: 'red',
             },
         },
     },
 });
 
-const siriusWebTheme = createTheme(
-    {
-        overrides: {
-            MuiAvatar: {
-                colorDefault: {
-                    backgroundColor: baseTheme.palette.primary.main,
-                },
-            },
-            MuiBadge:{
-                badge: {
-                    color:'#fff',
-                    background:'#FF3333'
-                },
-            }
-        },
-    },
-    baseTheme
-);
 
 const style = {
     display: 'grid',
@@ -74,7 +56,7 @@ const style = {
 };
 ReactDOM.render(
         <BrowserRouter>
-            <ThemeProvider theme={siriusWebTheme}>
+            <ThemeProvider theme={baseTheme}>
                 <CssBaseline />
                 <div style={style}>
                     <Main />

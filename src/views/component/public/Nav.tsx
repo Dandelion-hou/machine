@@ -1,4 +1,4 @@
-import { makeStyles, emphasize } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import Badge from  '@material-ui/core/Badge';
 import database from '../../../static/ic_device_normal.png';
 const Styles = makeStyles((theme) => ({
@@ -20,7 +20,11 @@ const Styles = makeStyles((theme) => ({
         alignItems: 'center',
         cursor:'pointer',
         justifyContent: 'flex-end',
-    }
+        '& .MuiBadge-badge':{
+            color:'#fff',
+            background:'#FF3333'
+        }
+    },
 }));
 export const Nav = (props) => {
     const classes = Styles();
@@ -31,7 +35,13 @@ export const Nav = (props) => {
         <div className={classes.navbar}>
                 <div />
                 <div className={classes.right} onClick={()=>clickbtn()}>
-                        <Badge badgeContent={4}  >
+                        <Badge badgeContent={4}
+                               anchorOrigin={{
+                                    vertical: 'top',
+                                    horizontal: 'right',
+                               }}
+
+                        >
                             <img
                                 className={classes.database}
                                 src={database}

@@ -1,74 +1,72 @@
 .select-page{
     width: 100%;
-    height:77vh;
+    height:78vh;
     position: fixed;
     top: 0;
-    padding:0 2vw;
     box-sizing: border-box;
-    background: inherit;
     overflow: hidden;
+    padding:0 2vw;
     background: rgba(30,34,40,0.80);
-    backdrop-filter: blur(7px);
+    backdrop-filter:blur(3px);
+
 }
 
-
 .select-close{
-    margin-top: 4vh;
+    margin-top: 4.2vh;
     display: flex;
-    height: 60px;
+    height: 7vh;
     align-content: center;
     justify-content: flex-end;
 
 }
 .select-close img{
-    width: 20px;
-    height:20px;
+    width:2.2vh;
+    height:2vh;
     cursor: pointer;
 }
 .select-title{
-    height: 36px;
+    height: 4vh;
     font-family: PingFangSC-Medium;
-    font-size: 36px;
+    font-size: 2.5rem;
     color: #FFFFFF;
-    line-height: 36px;
+    line-height: 4vh;
     font-weight: 500;
     text-align: center;
-    margin-bottom: 70px;
+    margin-bottom: 10.5vh;
     margin-top: 5vh;
 }
 .select-wrapper{
-    width: 90%;
-    height: 400px;
+    width: 83vw;
+    height: 38vh;
     margin: 0 auto;
 }
 .select-list{
     display: flex;
-    margin:40px 0;
+    margin:2vh 0;
     justify-content: flex-start;
 }
 .select-item{
     cursor: pointer;
     margin: 0 auto;
-    background: #4b3baf;
 }
 .select-image{
-    width: 160px;
-    height: 225.63px;
-    background: #4b3baf;
+    width: 17vh;
+    height: 24vh;
     box-shadow: 0px 12px 40px 0px rgba(0,0,0,0.5);
 }
-.select-backimage{
-    width: 251px;
-    height: 251px;
-    background-image: linear-gradient(0deg, rgba(59,63,70,0.00) 17%, #3B3F46 100%);
-}
+
 .select-desc{
     font-family: PingFangSC-Regular;
     font-size: 14px;
     color: #838391;
     text-align: center;
-    line-height: 44px;
+    line-height: 4vh;
     font-weight: 400;
+}
+.select-backimage{
+    width: 251px;
+    height: 251px;
+    background-image: linear-gradient(0deg, rgba(59,63,70,0.00) 17%, #3B3F46 100%);
 }
 .select-badge{
     width: 32px;
