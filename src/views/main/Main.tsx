@@ -67,19 +67,18 @@ export const Main=()=>{
                                       isshow={chooseflag}
                                       onCloseChange={()=>handleSelectedChange(false,fullpageApi)} />
                         </Drawer>
-                        <div className="section" >
-                            <div className="pagecontainer section2-bg">
-                                <Nav  onSelectedChange={()=>handleSelectedChange(true,fullpageApi)}/>
-                                <Charts machineid={machineid} pageindex={pageindex} />
-                            </div>
-                        </div>
                         <div className="section">
                             <div className="pagecontainer section1-bg">
                                 <Nav  onSelectedChange={()=>handleSelectedChange(true,fullpageApi)}/>
                                 <FirstCarousel pageindex={pageindex} fullpage_api={fullpageApi} />
                             </div>
                         </div>
-
+                        <div className="section" >
+                            <div className="pagecontainer section2-bg">
+                                <Nav  onSelectedChange={()=>handleSelectedChange(true,fullpageApi)}/>
+                                <Charts machineid={machineid} pageindex={pageindex} />
+                            </div>
+                        </div>
 
 
                         <div className="section" >

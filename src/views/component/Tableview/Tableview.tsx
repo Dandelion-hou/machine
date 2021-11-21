@@ -26,7 +26,7 @@ const Styles = makeStyles((theme) => ({
     page: {
         textAlign: 'center',
         height: '100%',
-        paddingTop: '11vh',
+        paddingTop: '7vh',
         background: 'rgba(28,33,40,0.95)'
     },
     title: {
@@ -36,21 +36,23 @@ const Styles = makeStyles((theme) => ({
     },
     tableView: {
         marginTop: '80px',
-        width: '1549px',
-        //textAlign: 'center',
+        width: '80%',
+        textAlign: 'center',
         margin: '0 auto'
     },
     tableTitle: {
         color: '#fff',
         fontSize: '16px',
+        height: '20px',
         letterSpacing: 0,
         fontWeight: 500,
         textAlign: 'left',
         marginBottom: '20px',
     },
     tableContainer: {
+        maxHeight: '400px',
         '& .MuiTableContainer-root': {
-            height: ''
+            height: '',
         },
         '& .MuiPaper-root': {
             backgroudColor: '#282c33'
@@ -65,10 +67,8 @@ const Styles = makeStyles((theme) => ({
         },
     },
     table: {
-        width: '1529px',
-        hright: '450px',
         background: '#282C33',
-
+        scrollManner: 'page-animation:true, step-animation:true, step:auto, page:auto',
     },
     tableHeader: {
         height: '46px',
@@ -114,9 +114,9 @@ const Styles = makeStyles((theme) => ({
         }
     },
     record: {
-        width: '18px',
-        height: '18px',
-        marginRight: '15px'
+        width: '16px',
+        height: '16px',
+        marginRight: '15px',
     }
 }));
 
@@ -129,25 +129,7 @@ const Styles = makeStyles((theme) => ({
 function createData(name: string, id: string, location: string, event: string, type: string, time: string) {
     return { name, id, location, event, type, time };
 }
-let rows = [
-    // {
-    //     "id": '',
-    //     "name": '',
-    //     "location": '',
-    //     "event": '',
-    //     "type": '',
-    //     "time": ''
-    // }
-];
-// const rows = [
-//     createData('SRU路由交换版', '16842753', '1/1', '低报', '警告', '2017-07-31 12：33：22'),
-//     createData('SRU路由交换版', '16842754', '1/1', '低报', '警告', '2017-07-31 12：33：22'),
-//     createData('SRU路由交换版', '16842755', '1/1', '低报', '警告', '2017-07-31 12：33：22'),
-//     createData('SRU路由交换版', '16842756', '1/1', '低报', '警告', '2017-07-31 12：33：22'),
-//     createData('SRU路由交换版', '16842757', '1/1', '低报', '警告', '2017-07-31 12：33：22'),
-//     createData('SRU路由交换版', '16842758', '1/1', '低报', '警告', '2017-07-31 12：33：22'),
-
-// ];
+let rows = [];
 function TableHeader(props) {
     const classes = Styles();
     const { page, rowsPerPage } = props;
@@ -156,7 +138,7 @@ function TableHeader(props) {
     return (
         <div className={classes.tableTitle}>
             <img src={record} alt="" className={classes.record} />
-            告警历史 | 显示第 {firstRecord} 条到第 {lastRecord} 条记录，共 {rows.length} 条记录
+            <a>告警历史 | 显示第 {firstRecord} 条到第 {lastRecord} 条记录，共 {rows.length} 条记录</a>
         </div>
     )
 }
@@ -328,9 +310,6 @@ export const Tableview = (props) => {
         <div className={classes.page}>
             <div className={classes.title}>报警历史</div>
             <div className={classes.tableView}>
-                {/* <div className={classes.tableTitle}>
-                    告警历史 | 显示第 1 条到第 1 条记录，共 1234 条记录
-                </div> */}
                 <div>
                     <BasicTable message={message} />
                 </div>

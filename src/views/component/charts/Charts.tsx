@@ -77,42 +77,42 @@ const Styles = makeStyles((theme) => ({
         justifyContent: 'flex-end',
         paddingRight:'0.9vw'
     },
-    select:{
-        color:'#ccc',
-        fontSize:'14px',
-        fontFamily:'PingFangSC-Regular',
-        fontWeight:400,
-        '& .MuiSelect-select':{
-            paddingLeft:'15px',
-        },
-        '& .MuiSelect-icon':{
-            color: '#999',
-            marginLeft: '15px'
-        }
+    FormControl:{
+        minWidth:'130px',
+        position:'relative',
+        border:'1px solid #41454C',
+        borderRadius:'4px',
+        marginLeft:'20px',
+    },
+    occupy:{
+        width:'100%',
+        height:'30px',
+        cursor:'pointer',
+        position:'absolute'
     },
     autocomplete:{
-        paddingLeft:'15px',
         '& *':{
             color:'#ccc',
         },
         '& input':{
             fontSize:'14px',
-            paddingLeft:'15px',
+            paddingLeft:'15px !important    ',
             fontFamily:'PingFangSC-Regular',
             fontWeight:400,
         },
-
         '& .MuiAutocomplete-inputRoot':{
             paddingRight:'0',
-        }
+        },
 
     },
-    FormControl:{
-        minWidth:'130px',
-        border:'1px solid #41454C',
-        borderRadius:'4px',
-        marginLeft:'20px',
+    fullpage:{
+        width:'100vw',
+        height:'100vh',
+        position:'absolute',
+        zIndex:988,
+        top:'0vh'
     },
+
     title:{
         fontSize: '36px',
         textAlign: 'center',
@@ -125,9 +125,7 @@ const Styles = makeStyles((theme) => ({
     color:{
         color: '#fff',
     },
-    occupy:{
 
-    },
     container:{
         width:'81vw',
         boxSizing:'border-box',
@@ -145,6 +143,15 @@ const inittime=()=>{
         {id:1,title:'近一天',starttime:pre_oneday,endtime:endtime},
         {id:2,title:'近一周',starttime:pre_sevenday,endtime:endtime},
         {id:3,title:'近一月',starttime:pre_month,endtime:endtime},
+        {id:4,title:'近一天',starttime:pre_oneday,endtime:endtime},
+        {id:5,title:'近一周',starttime:pre_sevenday,endtime:endtime},
+        {id:6,title:'近一月',starttime:pre_month,endtime:endtime},
+        {id:7,title:'近一天',starttime:pre_oneday,endtime:endtime},
+        {id:8,title:'近一周',starttime:pre_sevenday,endtime:endtime},
+        {id:9,title:'近一月',starttime:pre_month,endtime:endtime},
+        {id:10,title:'近一天',starttime:pre_oneday,endtime:endtime},
+        {id:11,title:'近一周',starttime:pre_sevenday,endtime:endtime},
+        {id:12,title:'近一月',starttime:pre_month,endtime:endtime},
     ]
 }
 export const Charts= (props) => {
@@ -152,15 +159,17 @@ export const Charts= (props) => {
     const [option, setOption] = useState(option_default);
     /*机器分类*/
     const [machine,setMachine]=useState([])
-    /*选中机器*/
     const [machineindex,setMachineindex]=useState(0)
+    const [showmachine,setShowmachine]=useState(false)
     /*筛选属性*/
     const [prop,setProp]=useState([])
-    /*选中属性*/
     const [propindex,setPropindex]=useState(0)
+    const [showprop,setShowprop]=useState(false)
+    const [refreshflag,setRefreshflag]=useState(false)
     /*筛选时间*/
     const time=inittime()
     const [timeindex,setTimeindex]=useState(0)
+    const [showtime,setShowtime]=useState(false)
     const refreshoption=async ()=>{
         let machineid=machine[machineindex].id
         let propid=prop[propindex].id
@@ -173,16 +182,7 @@ export const Charts= (props) => {
         new_option.xAxis.data=chartdata.x_data
         // @ts-ignore
         new_option.series[0].data=chartdata.y_data
-        console.log(new_option)
         setOption(new_option)
-    }
-
-    /*筛选属性*/
-    const [showmachine,setShowmachine]=useState(true)
-    /*测试*/
-    const controlstate=()=>{
-        alert('click')
-        setShowmachine(!showmachine);
     }
     /*
     *重新绘图
@@ -198,16 +198,18 @@ export const Charts= (props) => {
         if(props.pageindex===1){
             /*section1显示*/
             reset()
+        }else{
+            setRefreshflag(true);
         }
     },[props.machineid])
     /*触发条件重置*/
     useEffect(()=>{
-        if(props.pageindex===1){
+        if(props.pageindex===1&&refreshflag){
             /*section1显示*/
             reset()
+            setRefreshflag(false)
         }
     },[props.pageindex])
-
     /*
     * 选择设备刷新当前页面状态
     * 重新请求二级分类
@@ -229,13 +231,17 @@ export const Charts= (props) => {
         let new_option=lodash.cloneDeep(option_default)
         setOption(new_option)
     }
-
-
     /*
      * 二级分类改变事件
      * */
+    const handleShowMachineChange=()=>{
+        setShowmachine(!showmachine)
+    }
     const handleMachineChange=async (event)=>{
-        let machineindex=event.target.value;
+        let machineindex=machine.findIndex(item=>{
+            return item.title===event.title
+        })
+        setShowmachine(false)
         setMachineindex(machineindex)
         let propsitem=await _getprops({id:machine[machineindex].id})
         // @ts-ignore
@@ -247,87 +253,91 @@ export const Charts= (props) => {
         setOption(new_option)
     }
     /*
+     * 关闭所有
+     * */
+    const closeallselect=()=>{
+        setShowprop(false)
+        setShowtime(false)
+        setShowmachine(false)
+    }
+    /*
      * 属性改变事件
      * */
+    const handleShowPropChange=()=>{
+        setShowprop(!showprop)
+    }
     const handlePropChange=(event)=>{
-        setPropindex(event.target.value)
+        setShowprop(false)
+        let propindex=prop.findIndex(item=>{
+            return item.title===event.title
+        })
+        setPropindex(propindex)
     }
     /*
      * 时间改变事件
      * */
+    const handleShowTimeChange=()=>{
+        setShowtime(!showtime)
+    }
     const handleTimeChange=(event)=>{
-        setTimeindex(event.target.value)
+        setShowtime(false)
+        let timeindex=time.findIndex(item=>{
+            return item.title===event.title
+        })
+        setTimeindex(timeindex)
     }
 
     const classes = Styles();
     return (
         <div>
+            <div className={classes.fullpage} style={{display:(showtime||showprop||showmachine)?'block':'none'}} onClick={()=>closeallselect()}></div>
             <div className={classes.title}>设备趋势</div>
             <div className={classes.container}>
                 <div className={classes.selectcomp}>
-
                     <FormControl className={classes.FormControl}>
+                        {/*设备二级分类*/}
+                        <Autocomplete
+                            id="grouped-demo"
+                            options={machine}
+                            disabled={true}
+                            open={showmachine}
+                            onChange={(e,newValue)=>handleMachineChange(newValue)}
+                            getOptionLabel={(option) => option.title}
+                            className={classes.autocomplete}
+                            closeIcon={null}
+                            renderInput={(params) => <TextField {...params} placeholder={'请选择'}  className={classes.color} disabled={true} />}
+                        />
+                        <div className={classes.occupy} onClick={()=>handleShowMachineChange()}></div>
+                    </FormControl>
+                    <FormControl className={classes.FormControl}>
+                        {/*设备属性*/}
+                        <Autocomplete
+                            id="grouped-demo"
+                            options={prop}
+                            disabled={true}
+                            open={showprop}
+                            onChange={(e,newValue)=>handlePropChange(newValue)}
+                            getOptionLabel={(option) => option.title}
+                            className={classes.autocomplete}
+                            closeIcon={null}
+                            renderInput={(params) => <TextField {...params} placeholder={'请选择'}   className={classes.color} disabled={true} />}
+                        />
+                        <div className={classes.occupy} onClick={()=>handleShowPropChange()}></div>
+                    </FormControl>
+                    <FormControl className={classes.FormControl}>
+                        {/*设备时间段分类*/}
                         <Autocomplete
                             id="grouped-demo"
                             options={time}
                             disabled={true}
-                            blurOnSelect={'mouse'}
-                            open={showmachine}
-
+                            open={showtime}
+                            onChange={(e, newValue)=>handleTimeChange(newValue)}
                             getOptionLabel={(option) => option.title}
                             className={classes.autocomplete}
                             closeIcon={null}
-                            renderInput={(params) => <TextField {...params}  className={classes.color} disabled={true} />}
+                            renderInput={(params) => <TextField {...params} placeholder={'请选择'}   className={classes.color} disabled={true} />}
                         />
-                        <div className={classes.occupy} onClick={()=>controlstate}></div>
-                    </FormControl>
-                    <Box sx={{ minWidth: 120 }}>
-                    <FormControl className={classes.FormControl}>
-
-
-                        {/*设备二级分类*/}
-                        <Select
-                            className={classes.select}
-                            id="cate-select"
-                            onChange={handleMachineChange}
-                            value={machineindex}
-                            labelId="cate-select-id"
-                            label="">
-                                {machine.map((item,index) => (
-                                    <MenuItem  key={item.id} value={index}>{item.title}</MenuItem>
-                                ))}
-                        </Select>
-                    </FormControl>
-                    </Box>
-                    <FormControl className={classes.FormControl}>
-                        {/*设备属性*/}
-                        <Select
-                            displayEmpty
-                            className={classes.select}
-                            id="cate-select"
-                            onChange={handlePropChange}
-                            value={propindex}
-                            labelId="cate-select-id"
-                            label="">
-                            {prop.map((item,index) => (
-                                <MenuItem key={item.id} value={index}>{item.title}</MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
-                    <FormControl className={classes.FormControl}>
-                        {/*设备时间*/}
-                        <Select
-                            displayEmpty
-                            className={classes.select}
-                            id="cate-select"
-                            onChange={handleTimeChange}
-                            labelId="cate-select-id"
-                            value={timeindex}
-                            label="">
-                            {time.map((item,index) => (
-                                <MenuItem key={item.id} value={index}>{item.title}</MenuItem>
-                            ))}
-                        </Select>
+                        <div className={classes.occupy} onClick={()=>handleShowTimeChange()}></div>
                     </FormControl>
                 </div>
                 <ReactEcharts
