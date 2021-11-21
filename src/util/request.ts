@@ -11,6 +11,8 @@ export function _getbanner(){
             {id:'xx1',
                 title:'网络设备数据监测分析',
                 detail:'产品产品产品产品产品产品产品产品产品产品产品产品产品产品产品产品产品',
+                state:0,
+                num:1,
                 banner:['',''],
                 component:[
                     { id: '1', title: '部件名称1',state:0, content: [

@@ -8,7 +8,6 @@ import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import './chart.css'
 import {Mouse} from "../public/Mouse";
 const lodash = require('lodash');//深拷贝
 const echarts = require('echarts/lib/echarts');
@@ -126,6 +125,9 @@ const Styles = makeStyles((theme) => ({
     color:{
         color: '#fff',
     },
+    occupy:{
+
+    },
     container:{
         width:'81vw',
         boxSizing:'border-box',
@@ -173,6 +175,14 @@ export const Charts= (props) => {
         new_option.series[0].data=chartdata.y_data
         console.log(new_option)
         setOption(new_option)
+    }
+
+    /*筛选属性*/
+    const [showmachine,setShowmachine]=useState(true)
+    /*测试*/
+    const controlstate=()=>{
+        alert('click')
+        setShowmachine(!showmachine);
     }
     /*
     *重新绘图
@@ -260,11 +270,16 @@ export const Charts= (props) => {
                         <Autocomplete
                             id="grouped-demo"
                             options={time}
+                            disabled={true}
+                            blurOnSelect={'mouse'}
+                            open={showmachine}
+
                             getOptionLabel={(option) => option.title}
                             className={classes.autocomplete}
                             closeIcon={null}
                             renderInput={(params) => <TextField {...params}  className={classes.color} disabled={true} />}
                         />
+                        <div className={classes.occupy} onClick={()=>controlstate}></div>
                     </FormControl>
                     <Box sx={{ minWidth: 120 }}>
                     <FormControl className={classes.FormControl}>

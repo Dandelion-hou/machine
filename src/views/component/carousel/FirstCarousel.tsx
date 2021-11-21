@@ -5,15 +5,18 @@ import frontSide from '../../../static/banner.png';
 import SideDrawer from '../carousel/SideDrawer';
 import {_getbanner} from "../../../util/request";
 import {Mouse} from "../public/Mouse";
+import './cycle.css';
+import Background from  '../../../static/bag_dvice_home.png';
 const Styles = makeStyles((theme) => ({
     info: {
-        position: 'relative',
+        position: 'absolute',
         left: '9.5vw',
         top: '34vh',
+        zIndex:10,
         textAlign: 'left'
     },
     title: {
-        fontSize: '2rem',
+        fontSize: '2em',
         color: theme.palette.secondary.main,
         width: '195px',
         height: '90px',
@@ -28,43 +31,73 @@ const Styles = makeStyles((theme) => ({
         fontWeight: 400
     },
     carouselWrapper:{
-        width: '40%',
-        height: '71vh',
-        margin: '0 auto',
-        textAlign:'center',
+        width: '35vw',
+        height: '80vh',
+        backgroundImage: "url(" +  Background  + ")",
+        backgroundSize:'100%',
+        backgroundRepeat:'no-repeat',
+        margin: '6vh auto 0',
+        textAlign:'center'
+    },
+
+    container:{
+        height: '70vh',
     },
     imageBox: {
-
-    },
-    container:{
-        marginTop:'auto',
+        height: "56vh",
+        width:'39vh',
+        margin:'0 auto',
+        position: 'relative',
+        top:'9vh',
     },
     image: {
-        height: "55vh",
+        height: "56vh",
         width:'39vh',
     },
     /* 环形 */
-    circle:{
-        position: 'relative',
-        marginTop: '-25px',
-        marginLeft: '25px'
+    circlebox:{
+        position: 'absolute',
+        cursor:'pointer',
+        top: '-20px',
+        right: '-20px',
+        width: '40px',
+        height: '40px',
+        color:'#fff',
+        fontFamily: 'PingFangSC-Medium',
+        fontSize: '16px'
     },
     circlecenter:{
         position: 'absolute',
-        left: '50%',
-        top: '50%',
-        width: '60rpx',
-        height: '60rpx',
-        opacity: '0',
-        borderRadius: '50%',
-        textAlign: 'center',
-        lineHeight: '74rpx',
-        marginLeft: '2rpx',
-        backgroundColor:'transparent',
+        background:theme.palette.secondary.main,
+        width: '26px',
+        borderRadius:'50%',
+        lineHeight:'26px',
+        left:'7px',
+        top:'7px',
+        height: '26px',
     },
-    circle3:{
+    circleanimation:{
+        position: 'absolute',
+        background:theme.palette.secondary.main,
+        width: '40px',
+        borderRadius:'50%',
+        opacity:0,
+        height: '40px',
         animation: 'circle 3s linear 1.6s infinite'
+    },
+    circleanimation2:{
+        position: 'absolute',
+        background:theme.palette.secondary.main,
+        width: '40px',
+        opacity:0,
+        borderRadius:'50%',
+        height: '40px',
+        animation: 'circle2 3s linear 1.2s infinite'
+    },
+    circlewarn:{
+        background:'#FF8533 !important',
     }
+
 }));
 
 export const FirstCarousel = (props) => {
@@ -74,6 +107,8 @@ export const FirstCarousel = (props) => {
         id:'',
         title:'',
         detail:'',
+        state:0,
+        num:1,
         banner:[],
         component:[],
     }
@@ -81,6 +116,7 @@ export const FirstCarousel = (props) => {
     const [device, setDevice] = useState(defaultDevice);
 
     const handleClick = (open) => {
+        props.fullpage_api.setAllowScrolling(!open);
         setDrawer(open);
     };
     /*初始化*/
@@ -97,7 +133,6 @@ export const FirstCarousel = (props) => {
     let customIcon=<div className='custom-icon'></div>
     return (
             <>
-                <div >
                     <div className={classes.info}>
                         <div className={classes.title}>
                             {device.title}
@@ -118,7 +153,7 @@ export const FirstCarousel = (props) => {
                             style: {
                                 background: '#767D87',
                                 height: '12px',
-                                margin:'5vh 8px 0',
+                                margin:'1vh 8px 0',
                                 borderRadius:'50%',
                                 width: '12px'
                             }
@@ -129,18 +164,23 @@ export const FirstCarousel = (props) => {
                             }
                         }}
                     >
-                            {device.banner.map((item)=> {
+                            {device.banner.map((item,index)=> {
                                 return (
-                                    <div className={classes.container} key={item.id}>
-                                        <div className={classes.imageBox} >
-                                            <img src={frontSide} className={classes.image}
-                                             onClick={() => handleClick(true)}></img>
-                                        </div>
+                                    <div className={classes.container} key={index}>
+                                            <div className={classes.imageBox} >
+                                                <div className={classes.circlebox} onClick={() => handleClick(true)}>
+                                                    <div className={[classes.circleanimation,device.state==1?classes.circlewarn:''].join(' ')}></div>
+                                                    <div className={[classes.circleanimation2,device.state==1?classes.circlewarn:''].join(' ')}></div>
+                                                    <div className={[classes.circlecenter,device.state==1?classes.circlewarn:''].join(' ')}>
+                                                        {device.state==1?device.num:''}
+                                                    </div>
+                                                </div>
+                                                <img src={frontSide} className={classes.image}></img>
+                                            </div>
                                     </div>
                                 )
                             })}
                     </Carousel>
-                </div>
                 <div>
                     {drawer && (<SideDrawer component={device.component} open={drawer} onClick={(e) => handleClick(e)} />)}
                 </div>

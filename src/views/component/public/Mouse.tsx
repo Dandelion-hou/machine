@@ -4,7 +4,7 @@ const useFooterStyles = makeStyles((theme) => ({
     mousecontainer:{
         position: 'absolute',
         bottom:'-12px',
-        left:'49vw',
+        left:'calc(50vw - 12px)',
         width:'20px',
         height:'32px'
     },

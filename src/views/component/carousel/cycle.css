@@ -1,0 +1,28 @@
+@keyframes circle{
+from {
+    opacity: 0.6;
+    -webkit-transform: scale(0.6);
+}
+50% {
+    opacity: 0.6;
+    -webkit-transform: scale(1.1);
+}
+to {
+    opacity: 0.6;
+    -webkit-transform: scale(0.6);
+}
+}
+@keyframes circle2{
+    from {
+        opacity: 0.3;
+        -webkit-transform: scale(0.6);
+    }
+    50% {
+        opacity: 0.3;
+        -webkit-transform: scale(1);
+    }
+    to {
+        opacity: 0.3;
+        -webkit-transform: scale(0.6);
+    }
+}

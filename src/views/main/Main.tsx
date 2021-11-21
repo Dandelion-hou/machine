@@ -23,8 +23,9 @@ export const Main=()=>{
         setMachineid(machineid) //会自动触发上述effect
     }
     /*控制开关触发*/
-    const handleSelectedChange=(flag)=>{
+    const handleSelectedChange=(flag,fullpageApi)=>{
         setChooseflag(flag)
+        fullpageApi.setAllowScrolling(!flag);
     }
 
     useEffect( ()=> {
@@ -43,6 +44,7 @@ export const Main=()=>{
             navigation
             scrollingSpeed = {1000}
             scrollHorizontally = {true}
+            setAllowScrolling = {false}
             sectionsColor={["#1D2227", "#1D2227", "#1D2227"]}
             onLeave={(index, nextIndex, direction)=>{
                 /*记录切换页面*/
@@ -52,27 +54,37 @@ export const Main=()=>{
                 /*关闭选择弹窗*/
                 // setChooseflag(false)
             }}
-            render={() => {
+            render={({ state, fullpageApi }) => {
+                console.log(fullpageApi)
                 return (
                     <>
-
-                        <div className="section">
-                            <div className="pagecontainer section1-bg">
-                                <Nav  onSelectedChange={()=>handleSelectedChange(true)}/>
-                                <FirstCarousel pageindex={pageindex} />
-                            </div>
-                        </div>
+                        <Drawer
+                            anchor='top'
+                            open={chooseflag}
+                            onClose={()=>handleSelectedChange(false,fullpageApi)}>
+                            <Selected machinelist={machinelist}
+                                      onChooseMachine={(chooseid)=>handleMachineChange(chooseid)}
+                                      isshow={chooseflag}
+                                      onCloseChange={()=>handleSelectedChange(false,fullpageApi)} />
+                        </Drawer>
                         <div className="section" >
                             <div className="pagecontainer section2-bg">
-                                <Nav  onSelectedChange={()=>handleSelectedChange(true)}/>
+                                <Nav  onSelectedChange={()=>handleSelectedChange(true,fullpageApi)}/>
                                 <Charts machineid={machineid} pageindex={pageindex} />
                             </div>
                         </div>
+                        <div className="section">
+                            <div className="pagecontainer section1-bg">
+                                <Nav  onSelectedChange={()=>handleSelectedChange(true,fullpageApi)}/>
+                                <FirstCarousel pageindex={pageindex} fullpage_api={fullpageApi} />
+                            </div>
+                        </div>
+
 
 
                         <div className="section" >
                             <div className="pagecontainer section3-bg">
-                                <Nav  onSelectedChange={()=>handleSelectedChange(true)}/>
+                                <Nav  onSelectedChange={()=>handleSelectedChange(true,fullpageApi)}/>
                                 <Tableview  />
                             </div>
                         </div>
@@ -83,15 +95,7 @@ export const Main=()=>{
             );
             }}
         />
-            <Drawer
-                anchor='top'
-                open={chooseflag}
-                onClose={()=>handleSelectedChange(false)}>
-                <Selected machinelist={machinelist}
-                          onChooseMachine={(chooseid)=>handleMachineChange(chooseid)}
-                          isshow={chooseflag}
-                          onCloseChange={()=>handleSelectedChange(false)} />
-            </Drawer>
+
         </>
 
     )
