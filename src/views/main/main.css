@@ -30,6 +30,10 @@
     text-align: center;
     font-weight: 400;
 }
+.MuiAutocomplete-option[aria-selected="true"]{
+    background: #14181F !important;
+    color: #44E7D5 ;
+}
 .section2-bg{
     background-image: linear-gradient(1deg, #13181F 0%, #13181F 58%);
 }

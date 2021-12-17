@@ -81,7 +81,6 @@ export function _getprops(data){
     // return axios.get("/endpoints",data)
     return new Promise(resolve => {
         resolve([
-            {id:'0',title:'请选择'},
             {id:'xx1',title:'属性1'},
             {id:'xx2',title:'属性2'},
             {id:'xx3',title:'属性3'},
@@ -107,22 +106,19 @@ export function _getchart(data){
 
 /*
 * section 2
+*
 * */
-export function _message(data){
-    return axios.get("/endpoints",data)
-}
+
 export function getMessage(params = {}) {
     return new Promise((resolve, reject) => {
         axios.get('./mock/message.json', {
             params: params,
-
         }).then((response) => {
             resolve(response.data);
             console.log(response.data)
-        })
-            .catch((error) => {
+        }).catch((error) => {
                 reject(error);
-            });
+        });
     });
 }
 

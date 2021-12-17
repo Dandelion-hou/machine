@@ -1,0 +1,64 @@
+[
+  { "id":"xx1", 
+    "title":"网络设备数据监测分析",
+    "detail":"产品产品产品产品产品产品产品产品产品产品产品产品产品产品产品产品产品",
+    "state":"0",
+    "num":"1",
+    "banner":["",""],
+    "component":
+    [
+      {
+        "id": "1",
+        "title": "部件名称1",
+        "state": 0,
+        "content": [
+          {
+            "id": "1",
+            "name": "状态",
+            "default": "正常",
+            "low": "",
+            "high": "",
+            "week": "",
+            "month": ""
+          },
+          {
+            "id": "2",
+            "name": "告警状态",
+            "default": "电压异常",
+            "low": "",
+            "high": "",
+            "week": "",
+            " month": ""
+          },
+          {
+            "id": "3",
+            "name": "电压值",
+            "default": "12V",
+            "low": "0",
+            "high": "10",
+            "week": "1",
+            "month": ""
+          },
+          {
+            "id": "4",
+            "name": "电流值",
+            "default": "6.1V",
+            "low": "0",
+            "high": "10",
+            "week": "5",
+            "month": "2"
+          },
+          {
+            "id": "5",
+            "name": "温度",
+            "default": "6.1V",
+            "low": "0",
+            "high": "10",
+            "week": "5",
+            "month": "2"
+          }
+        ]
+      }
+    ]
+  }
+]

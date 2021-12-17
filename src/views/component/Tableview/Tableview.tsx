@@ -120,12 +120,6 @@ const Styles = makeStyles((theme) => ({
     }
 }));
 
-
-
-
-
-
-
 function createData(name: string, id: string, location: string, event: string, type: string, time: string) {
     return { name, id, location, event, type, time };
 }

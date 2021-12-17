@@ -2,10 +2,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import ReactEcharts from  'echarts-for-react';
 import React, {useEffect, useState} from 'react';
 import {_getmachine,_getchart,_getprops} from "../../../util/request";
-import Box from '@material-ui/core/Box';
 import FormControl from "@material-ui/core/FormControl";
-import Select from "@material-ui/core/Select";
-import MenuItem from "@material-ui/core/MenuItem";
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import {Mouse} from "../public/Mouse";
@@ -139,19 +136,9 @@ const inittime=()=>{
     let pre_sevenday=endtime-86400*7
     let pre_month=new Date(date.setMonth(date.getMonth()-1)).getTime()
     return [
-        {id:0,title:'请选择'},
         {id:1,title:'近一天',starttime:pre_oneday,endtime:endtime},
         {id:2,title:'近一周',starttime:pre_sevenday,endtime:endtime},
         {id:3,title:'近一月',starttime:pre_month,endtime:endtime},
-        {id:4,title:'近一天',starttime:pre_oneday,endtime:endtime},
-        {id:5,title:'近一周',starttime:pre_sevenday,endtime:endtime},
-        {id:6,title:'近一月',starttime:pre_month,endtime:endtime},
-        {id:7,title:'近一天',starttime:pre_oneday,endtime:endtime},
-        {id:8,title:'近一周',starttime:pre_sevenday,endtime:endtime},
-        {id:9,title:'近一月',starttime:pre_month,endtime:endtime},
-        {id:10,title:'近一天',starttime:pre_oneday,endtime:endtime},
-        {id:11,title:'近一周',starttime:pre_sevenday,endtime:endtime},
-        {id:12,title:'近一月',starttime:pre_month,endtime:endtime},
     ]
 }
 export const Charts= (props) => {
@@ -159,17 +146,20 @@ export const Charts= (props) => {
     const [option, setOption] = useState(option_default);
     /*机器分类*/
     const [machine,setMachine]=useState([])
-    const [machineindex,setMachineindex]=useState(0)
+    const [machineindex,setMachineindex]=useState(-1)
     const [showmachine,setShowmachine]=useState(false)
+    const [machinevalue,setMachinevalue]=useState('')
     /*筛选属性*/
     const [prop,setProp]=useState([])
-    const [propindex,setPropindex]=useState(0)
+    const [propindex,setPropindex]=useState(-1)
     const [showprop,setShowprop]=useState(false)
     const [refreshflag,setRefreshflag]=useState(false)
+    const [propvalue,setPropvalue]=useState('')
     /*筛选时间*/
     const time=inittime()
-    const [timeindex,setTimeindex]=useState(0)
+    const [timeindex,setTimeindex]=useState(-1)
     const [showtime,setShowtime]=useState(false)
+    const [timevalue,setTimevalue]=useState('')
     const refreshoption=async ()=>{
         let machineid=machine[machineindex].id
         let propid=prop[propindex].id
@@ -188,7 +178,7 @@ export const Charts= (props) => {
     *重新绘图
     * */
     useEffect(()=>{
-        if(propindex!==0&&timeindex!==0){
+        if(propindex!==-1&&timeindex!==-1){
             refreshoption()
         }
     },[propindex,timeindex])
@@ -220,13 +210,16 @@ export const Charts= (props) => {
         /*重新请求二级分类-以及属性*/
         let machineitem=await _getmachine({id: props.machineid})
         let propsitem=await _getprops({id:machineitem[0].id})
+
         // @ts-ignore
         setMachine(machineitem)
         setMachineindex(0)
         // @ts-ignore
         setProp(propsitem)
-        setPropindex(0)
-        setTimeindex(0)
+        setPropvalue('')
+        setPropindex(-1)
+        setTimevalue('')
+        setTimeindex(-1)
         /*重置图*/
         let new_option=lodash.cloneDeep(option_default)
         setOption(new_option)
@@ -241,13 +234,16 @@ export const Charts= (props) => {
         let machineindex=machine.findIndex(item=>{
             return item.title===event.title
         })
+        setMachinevalue(event.title)
         setShowmachine(false)
         setMachineindex(machineindex)
         let propsitem=await _getprops({id:machine[machineindex].id})
         // @ts-ignore
         setProp(propsitem)
-        setPropindex(0)
-        setTimeindex(0)
+        setPropvalue('')
+        setTimevalue('')
+        setPropindex(-1)
+        setTimeindex(-1)
         /*重置图*/
         let new_option=lodash.cloneDeep(option_default)
         setOption(new_option)
@@ -271,6 +267,7 @@ export const Charts= (props) => {
         let propindex=prop.findIndex(item=>{
             return item.title===event.title
         })
+        setPropvalue(event.title)
         setPropindex(propindex)
     }
     /*
@@ -284,6 +281,7 @@ export const Charts= (props) => {
         let timeindex=time.findIndex(item=>{
             return item.title===event.title
         })
+        setTimevalue(event.title)
         setTimeindex(timeindex)
     }
 
@@ -297,27 +295,31 @@ export const Charts= (props) => {
                     <FormControl className={classes.FormControl}>
                         {/*设备二级分类*/}
                         <Autocomplete
-                            id="grouped-demo"
+                            id="grouped-demo-1"
                             options={machine}
                             disabled={true}
+                            selectOnFocus
                             open={showmachine}
                             onChange={(e,newValue)=>handleMachineChange(newValue)}
                             getOptionLabel={(option) => option.title}
                             className={classes.autocomplete}
                             closeIcon={null}
-                            renderInput={(params) => <TextField {...params} placeholder={'请选择'}  className={classes.color} disabled={true} />}
+                            inputValue={machinevalue}
+                            renderInput={(params) => <TextField {...params}  placeholder={'请选择'}  className={classes.color} disabled={true} />}
                         />
                         <div className={classes.occupy} onClick={()=>handleShowMachineChange()}></div>
                     </FormControl>
                     <FormControl className={classes.FormControl}>
                         {/*设备属性*/}
                         <Autocomplete
-                            id="grouped-demo"
+                            id="grouped-demo-2"
                             options={prop}
                             disabled={true}
+                            selectOnFocus
                             open={showprop}
                             onChange={(e,newValue)=>handlePropChange(newValue)}
                             getOptionLabel={(option) => option.title}
+                            inputValue={propvalue}
                             className={classes.autocomplete}
                             closeIcon={null}
                             renderInput={(params) => <TextField {...params} placeholder={'请选择'}   className={classes.color} disabled={true} />}
@@ -327,15 +329,17 @@ export const Charts= (props) => {
                     <FormControl className={classes.FormControl}>
                         {/*设备时间段分类*/}
                         <Autocomplete
-                            id="grouped-demo"
+                            id="grouped-demo-3"
                             options={time}
                             disabled={true}
+                            selectOnFocus
                             open={showtime}
                             onChange={(e, newValue)=>handleTimeChange(newValue)}
                             getOptionLabel={(option) => option.title}
+                            inputValue={timevalue}
                             className={classes.autocomplete}
                             closeIcon={null}
-                            renderInput={(params) => <TextField {...params} placeholder={'请选择'}   className={classes.color} disabled={true} />}
+                            renderInput={(params) => <TextField {...params}   placeholder={'请选择'}   className={classes.color} disabled={true} />}
                         />
                         <div className={classes.occupy} onClick={()=>handleShowTimeChange()}></div>
                     </FormControl>
