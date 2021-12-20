@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { makeStyles} from '@material-ui/core';
 import Carousel from 'react-material-ui-carousel';
 import frontSide from '../../../static/banner.png';
 import SideDrawer from '../carousel/SideDrawer';
-import {_getbanner} from "../../../util/request";
 import {Mouse} from "../public/Mouse";
 import './cycle.css';
 import Background from  '../../../static/bag_dvice_home.png';
@@ -97,48 +96,25 @@ const Styles = makeStyles((theme) => ({
     circlewarn:{
         background:'#FF8533 !important',
     }
-
 }));
 
 export const FirstCarousel = (props) => {
     const classes = Styles();
-    /*定义设备默认参数*/
-    const defaultDevice={
-        id:'',
-        title:'',
-        detail:'',
-        state:0,
-        num:1,
-        banner:[],
-        component:[],
-    }
-    const [drawer, setDrawer] = useState(false);
-    const [device, setDevice] = useState(defaultDevice);
 
+    const [drawer, setDrawer] = useState(false);
     const handleClick = (open) => {
         props.fullpage_api.setAllowScrolling(!open);
         setDrawer(open);
     };
-    /*初始化*/
-    useEffect(() => {
-        _getbanner().then(res=>{
-            // @ts-ignore
-            setDevice(res);
-        })
-    }, [])
-    /*触发条件重置*/
-    // useEffect(() => {
-    //     setDrawer(false);
-    // }, [props.pageindex])
     let customIcon=<div className='custom-icon'></div>
     return (
             <>
                     <div className={classes.info}>
                         <div className={classes.title}>
-                            {device.title}
+                            {props.device.displayName}
                         </div>
                         <div className={classes.detail}>
-                            {device.detail}
+                            {props.device.description}
                         </div>
                     </div>
                     <Carousel
@@ -164,25 +140,25 @@ export const FirstCarousel = (props) => {
                             }
                         }}
                     >
-                            {device.banner.map((item,index)=> {
+                            {props.device.banner.map((item,index)=> {
                                 return (
                                     <div className={classes.container} key={index}>
                                             <div className={classes.imageBox} >
                                                 <div className={classes.circlebox} onClick={() => handleClick(true)}>
-                                                    <div className={[classes.circleanimation,device.state==1?classes.circlewarn:''].join(' ')}></div>
-                                                    <div className={[classes.circleanimation2,device.state==1?classes.circlewarn:''].join(' ')}></div>
-                                                    <div className={[classes.circlecenter,device.state==1?classes.circlewarn:''].join(' ')}>
-                                                        {device.state==1?device.num:''}
+                                                    <div className={[classes.circleanimation,props.device.state===1?classes.circlewarn:''].join(' ')}></div>
+                                                    <div className={[classes.circleanimation2,props.device.state===1?classes.circlewarn:''].join(' ')}></div>
+                                                    <div className={[classes.circlecenter,props.device.state===1?classes.circlewarn:''].join(' ')}>
+                                                        {props.device.state===1?props.device.num:''}
                                                     </div>
                                                 </div>
-                                                <img src={frontSide} className={classes.image}></img>
+                                                <img alt={props.device.displayName} src={frontSide} className={classes.image}></img>
                                             </div>
                                     </div>
                                 )
                             })}
                     </Carousel>
                 <div>
-                    {drawer && (<SideDrawer component={device.component} open={drawer} onClick={(e) => handleClick(e)} />)}
+                    {drawer && (<SideDrawer machineid={props.device.id} open={drawer} onClick={(e) => handleClick(e)} />)}
                 </div>
                 <Mouse />
             </>

@@ -1,7 +1,7 @@
 import { makeStyles } from '@material-ui/core/styles';
 import ReactEcharts from  'echarts-for-react';
 import React, {useEffect, useState} from 'react';
-import {_getmachine,_getchart,_getprops} from "../../../util/request";
+import { _getchart,  _getprop, _getcomponet} from "../../../util/request";
 import FormControl from "@material-ui/core/FormControl";
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
@@ -129,16 +129,30 @@ const Styles = makeStyles((theme) => ({
         margin:'0 auto',
     },
 }));
+
+const formatTime = date => {
+    const year = date.getFullYear()
+    const month = date.getMonth() + 1
+    const day = date.getDate()
+    return `${[year, month, day].map(formatNumber).join('-')}`
+}
+
+const formatNumber = n => {
+    n = n.toString()
+    return n[1] ? n : `0${n}`
+}
+
 const inittime=()=>{
     let date=new Date()
     let endtime=date.getTime()
-    let pre_oneday=endtime-86400*1
-    let pre_sevenday=endtime-86400*7
-    let pre_month=new Date(date.setMonth(date.getMonth()-1)).getTime()
+    let endtimedate=formatTime(date)
+    let pre_oneday=formatTime(new Date(endtime-86400*1))
+    let pre_sevenday=formatTime(new Date(endtime-86400*7))
+    let pre_month=formatTime(new Date(date.setMonth(date.getMonth()-1)))
     return [
-        {id:1,title:'近一天',starttime:pre_oneday,endtime:endtime},
-        {id:2,title:'近一周',starttime:pre_sevenday,endtime:endtime},
-        {id:3,title:'近一月',starttime:pre_month,endtime:endtime},
+        {id:1,title:'近一天',starttime:pre_oneday,endtime:endtimedate},
+        {id:2,title:'近一周',starttime:pre_sevenday,endtime:endtimedate},
+        {id:3,title:'近一月',starttime:pre_month,endtime:endtimedate},
     ]
 }
 export const Charts= (props) => {
@@ -166,12 +180,18 @@ export const Charts= (props) => {
         let starttime=time[timeindex].starttime
         let endtime=time[timeindex].endtime
         let chartdata=await _getchart({machineid,propid,starttime,endtime})
+        // @ts-ignore
+        if(chartdata.result!=='success'){
+            return
+        }
+        // @ts-ignore
+        let x_data=Object.keys(chartdata.payload),y_data=Object.values(chartdata.payload)
         /*可能需要深拷贝---这里浅拷贝*/
         let new_option=lodash.cloneDeep(option_default)
         // @ts-ignore
-        new_option.xAxis.data=chartdata.x_data
+        new_option.xAxis.data=x_data
         // @ts-ignore
-        new_option.series[0].data=chartdata.y_data
+        new_option.series[0].data=y_data
         setOption(new_option)
     }
     /*
@@ -208,9 +228,25 @@ export const Charts= (props) => {
     */
     const reset=async ()=>{
         /*重新请求二级分类-以及属性*/
-        let machineitem=await _getmachine({id: props.machineid})
-        let propsitem=await _getprops({id:machineitem[0].id})
-
+        let machinelist=await _getcomponet({parentId: props.machineid})
+        console.log('machinelist',machinelist)
+        // 数据清洗
+        // @ts-ignore
+        let machineitem=machinelist._embedded.endpoints
+        machineitem=machineitem.map((item)=>{
+            delete item._links
+            item.content=[]
+            item.load=false
+            return item
+        })
+        let propslist=await _getprop({endpointId:machineitem[0].id,size:1000})
+        // 数据清洗
+        // @ts-ignore
+        let propsitem=propslist._embedded.variables
+        propsitem=propsitem.map((item)=>{
+            delete item._links
+            return item
+        })
         // @ts-ignore
         setMachine(machineitem)
         setMachineindex(0)
@@ -228,16 +264,26 @@ export const Charts= (props) => {
      * 二级分类改变事件
      * */
     const handleShowMachineChange=()=>{
+        props.fullpage_api.setAllowScrolling(showmachine);
         setShowmachine(!showmachine)
     }
     const handleMachineChange=async (event)=>{
+        console.log(event)
         let machineindex=machine.findIndex(item=>{
-            return item.title===event.title
+            return item.displayName===event.displayName
         })
-        setMachinevalue(event.title)
+        props.fullpage_api.setAllowScrolling(true);
+        setMachinevalue(event.displayName)
         setShowmachine(false)
         setMachineindex(machineindex)
-        let propsitem=await _getprops({id:machine[machineindex].id})
+        let propslist=await _getprop({endpointId:machine[machineindex].id,size:1000})
+        // 数据清洗
+        // @ts-ignore
+        let propsitem=propslist._embedded.variables
+        propsitem=propsitem.map((item)=>{
+            delete item._links
+            return item
+        })
         // @ts-ignore
         setProp(propsitem)
         setPropvalue('')
@@ -255,29 +301,34 @@ export const Charts= (props) => {
         setShowprop(false)
         setShowtime(false)
         setShowmachine(false)
+        props.fullpage_api.setAllowScrolling(true);
     }
     /*
      * 属性改变事件
      * */
     const handleShowPropChange=()=>{
+        props.fullpage_api.setAllowScrolling(showprop);
         setShowprop(!showprop)
     }
     const handlePropChange=(event)=>{
         setShowprop(false)
+        props.fullpage_api.setAllowScrolling(true);
         let propindex=prop.findIndex(item=>{
-            return item.title===event.title
+            return item.name===event.name
         })
-        setPropvalue(event.title)
+        setPropvalue(event.name)
         setPropindex(propindex)
     }
     /*
      * 时间改变事件
      * */
     const handleShowTimeChange=()=>{
+        props.fullpage_api.setAllowScrolling(showtime);
         setShowtime(!showtime)
     }
     const handleTimeChange=(event)=>{
         setShowtime(false)
+        props.fullpage_api.setAllowScrolling(true);
         let timeindex=time.findIndex(item=>{
             return item.title===event.title
         })
@@ -301,7 +352,7 @@ export const Charts= (props) => {
                             selectOnFocus
                             open={showmachine}
                             onChange={(e,newValue)=>handleMachineChange(newValue)}
-                            getOptionLabel={(option) => option.title}
+                            getOptionLabel={(option) => option.displayName}
                             className={classes.autocomplete}
                             closeIcon={null}
                             inputValue={machinevalue}
@@ -318,7 +369,7 @@ export const Charts= (props) => {
                             selectOnFocus
                             open={showprop}
                             onChange={(e,newValue)=>handlePropChange(newValue)}
-                            getOptionLabel={(option) => option.title}
+                            getOptionLabel={(option) => option.name}
                             inputValue={propvalue}
                             className={classes.autocomplete}
                             closeIcon={null}

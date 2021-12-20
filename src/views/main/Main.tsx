@@ -2,7 +2,6 @@ import ReactFullpage from '@fullpage/react-fullpage';
 import { FirstCarousel } from '../component/carousel/FirstCarousel';
 import { Charts } from '../component/charts/Charts';
 import { Tableview } from '../component/Tableview/Tableview';
-import { Footer } from "../footer/Footer";
 import {Drawer} from "@material-ui/core";
 import {Selected} from "../component/Selectdevice/Selected";
 import React, {useEffect, useState} from "react";
@@ -10,6 +9,17 @@ import {Nav} from "../component/public/Nav";
 import {_getall} from "../../util/request";
 import './main.css';
 export const Main=()=>{
+    /*定义设备默认参数*/
+    const defaultDevice={
+        id:'',
+        displayName:'',
+        description:'',
+        state:0,
+        num:1,
+        banner:[]
+    }
+    /*轮播设备*/
+    const [bannerdevice, setBannerdevice] = useState(defaultDevice);
     /*设备列表*/
     const [machinelist, setMachinelist] = useState([]);
     /*设备编号*/
@@ -30,12 +40,24 @@ export const Main=()=>{
 
     useEffect( ()=> {
         _getall({}).then(res=>{
-            let data=res
+            // 数据清洗
+            // @ts-ignore
+            let data=res._embedded.endpoints
+            data=data.map((item)=>{
+                delete item._links
+                item.state=2
+                item.num=1
+                item.banner=['','']
+                return item
+            })
+            console.log('data[0].id',data[0].id)
             // @ts-ignore
             setMachinelist(data);
+            setBannerdevice(data[0])
             setMachineid(data[0].id)
-        })
 
+
+        })
     },[])
 
     return(
@@ -54,8 +76,7 @@ export const Main=()=>{
                 /*关闭选择弹窗*/
                 // setChooseflag(false)
             }}
-            render={({ state, fullpageApi }) => {
-                console.log(fullpageApi)
+            render={({ fullpageApi }) => {
                 return (
                     <>
                         <Drawer
@@ -70,26 +91,24 @@ export const Main=()=>{
                         <div className="section">
                             <div className="pagecontainer section1-bg">
                                 <Nav  onSelectedChange={()=>handleSelectedChange(true,fullpageApi)}/>
-                                <FirstCarousel pageindex={pageindex} fullpage_api={fullpageApi} />
+                                <FirstCarousel device={bannerdevice} pageindex={pageindex} fullpage_api={fullpageApi} />
                             </div>
                         </div>
                         <div className="section" >
                             <div className="pagecontainer section2-bg">
                                 <Nav  onSelectedChange={()=>handleSelectedChange(true,fullpageApi)}/>
-                                <Charts machineid={machineid} pageindex={pageindex} />
+                                <Charts machineid={machineid} pageindex={pageindex} fullpage_api={fullpageApi} />
                             </div>
                         </div>
-
-
                         <div className="section" >
                             <div className="pagecontainer section3-bg">
                                 <Nav  onSelectedChange={()=>handleSelectedChange(true,fullpageApi)}/>
                                 <Tableview  />
                             </div>
                         </div>
-                        <div className="section fp-auto-height">
-                            <Footer />
-                        </div>
+                        {/*<div className="section fp-auto-height">*/}
+                        {/*    <Footer />*/}
+                        {/*</div>*/}
                     </>
             );
             }}

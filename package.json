@@ -2,6 +2,7 @@
   "name": "machine",
   "version": "0.1.0",
   "private": true,
+  "proxy":"http://172.8.1.10:8083",
   "dependencies": {
     "@apollo/client": "^3.4.17",
     "@fullpage/react-fullpage": "^0.1.19",

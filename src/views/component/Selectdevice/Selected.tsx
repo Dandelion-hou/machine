@@ -7,20 +7,8 @@ import deviceFont from '../../../static/banner.png';
 
 
 export const Selected=(props)=>{
-    let datatmp=[
-        {'id':'xx1',title:'设备名称1',faceimage:'#'},
-        {'id':'xx2',title:'设备名称2',faceimage:'#'},
-        {'id':'xx3',title:'设备名称3',faceimage:'#'},
-        {'id':'xx4',title:'设备名称4',faceimage:'#'},
-        {'id':'xx5',title:'设备名称5',faceimage:'#'},
-        {'id':'xx6',title:'设备名称1',faceimage:'#'},
-        {'id':'xx7',title:'设备名称2',faceimage:'#'},
-        {'id':'xx8',title:'设备名称3',faceimage:'#'},
-        {'id':'xx9',title:'设备名称4',faceimage:'#'},
-        {'id':'xx10',title:'设备名称5',faceimage:'#'},
-    ]
+    let datatmp=props.machinelist
     const pagesize=4 //每页显示4个
-
     /*
     * 切片函数
     * */
@@ -33,7 +21,7 @@ export const Selected=(props)=>{
             return sum;
         },[])
     }
-    const data=arrReduceWidthNumber(datatmp,4)
+    const data=arrReduceWidthNumber(datatmp,pagesize)
     /*
     * 自定义按钮
     * */

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import AccordionSummary from "@material-ui/core/AccordionSummary";
@@ -13,9 +13,9 @@ import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
 import TableBody from "@material-ui/core/TableBody";
 import Accordion from '@material-ui/core/Accordion';
-import {theme} from "../../../theme";
 import closeIcon from "../../../static/close.png";
-
+import {_getcomponet} from "../../../util/request";
+import {_getprop} from "../../../util/request";
 const useStyles = makeStyles({
   override:{
     backgroundColor: 'rgba(29,34,39,0.60)',
@@ -90,6 +90,46 @@ const useStyles = makeStyles({
 });
 
 export default function SwipeableTemporaryDrawer(props) {
+  /*组件列表*/
+  const [component, setComponent] = useState([]);
+
+  useEffect( ()=> {
+    _getcomponet({parentId: props.machineid}).then(res=>{
+      // 数据清洗
+      // @ts-ignore
+      let data=res._embedded.endpoints
+      data=data.map((item)=>{
+        delete item._links
+        item.state=1
+        item.content=[]
+        item.load=false
+        return item
+      })
+      setComponent(data)
+    })
+  },[props.machineid])
+
+  const expand = (id) => {
+    let index=component.findIndex((item)=>{
+      return item.id===id
+    })
+    if(component[index].load) return
+    _getprop({endpointId: id,size:1000}).then(res=>{
+      // 数据清洗
+      // @ts-ignore
+      let data=res._embedded.variables
+      component[index].content=data.map((item)=>{
+        delete item._links
+        item.low=0
+        item.high=0
+        item.week=0
+        item.month=0
+        return item
+      })
+      component[index].load=true
+      setComponent(component)
+    })
+  };
   const classes = useStyles();
   return(
     <>
@@ -102,14 +142,15 @@ export default function SwipeableTemporaryDrawer(props) {
           <div className={classes.drawerClose}>
             <img src={closeIcon} alt="关闭图标" onClick={()=>props.onClick(false)}/>
           </div>
-          {props.component.map((block) => (
-              <Accordion className={classes.accordion}>
+          {component.map((block) => (
+              <Accordion key={block.id} className={classes.accordion}>
                 <AccordionSummary
                     expandIcon={<ExpandMoreIcon />}
+                    onClick={()=>expand(block.id)}
                     aria-controls="panel1a-content"
                     id={block.id}
                 >
-                  <Typography >  <span className={block.state==0?classes.normal:classes.warning}></span> {block.title}</Typography>
+                  <Typography >  <span className={block.state===0?classes.normal:classes.warning}></span> {block.displayName}</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
                   <TableContainer component={Paper}>
@@ -128,9 +169,9 @@ export default function SwipeableTemporaryDrawer(props) {
                         {block.content.map((row) => (
                             <TableRow key={row.id}>
                               <TableCell className={classes.tableCell} component="th" scope="row">
-                                {row.name}
+                                {row.name}123
                               </TableCell>
-                              <TableCell align="right" className={classes.tableCell}>{row.default}</TableCell>
+                              <TableCell align="right" className={classes.tableCell}>{row.value}</TableCell>
                               <TableCell align="right" className={classes.tableCell}>{row.low}</TableCell>
                               <TableCell align="right" className={classes.tableCell}>{row.high}</TableCell>
                               <TableCell align="right" className={classes.tableCell}>{row.week}</TableCell>

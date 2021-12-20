@@ -1,6 +1,4 @@
-import axios from 'axios';
-import {httpOrigin} from "../config/config";
-axios.defaults.url=httpOrigin;
+import axios,{AxiosResponse} from 'axios';
 /*
 * section 0
 * */
@@ -51,57 +49,70 @@ export function _getbanner(){
 
 }
 
+/**
+ * 获取所有设备
+ * */
 export function _getall(data){
-    // return axios.get("/endpoints",data)
     return new Promise(resolve => {
-        resolve([
-            {id:'xx1',title:'设备1'},
-            {id:'xx2',title:'设备2'},
-            {id:'xx3',title:'设备3'},
-            {id:'xx4',title:'设备4'},
-        ])
-    })
-}
-
-/*
-* section 1
-* */
-export function _getmachine(data){
-    // return axios.get("/endpoints",data)
-    return new Promise(resolve => {
-        resolve([
-            {id:'xx1',title:'设备1'},
-            {id:'xx2',title:'设备2'},
-            {id:'xx3',title:'设备3'},
-            {id:'xx4',title:'设备4'},
-        ])
-    })
-}
-export function _getprops(data){
-    // return axios.get("/endpoints",data)
-    return new Promise(resolve => {
-        resolve([
-            {id:'xx1',title:'属性1'},
-            {id:'xx2',title:'属性2'},
-            {id:'xx3',title:'属性3'},
-            {id:'xx4',title:'属性4'},
-            {id:'xx5',title:'属性2'},
-            {id:'xx6',title:'属性3'},
-            {id:'xx7',title:'属性4'},
-            {id:'xx8',title:'属性4'},
-            {id:'xx9',title:'属性4'},
-            {id:'xx10',title:'属性4'},
-        ])
-    })
-}
-export function _getchart(data){
-    // return axios.get("/endpoints",data)
-    return new Promise(resolve => {
-        resolve({
-            x_data:['Mon', 'Tue', 'Wed','Mon', 'Tue', 'Wed','Mon','Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-            y_data:[820, 932, 901,820, 932, 901,820, 932, 901, 934, 1290, 1330, 1320]
+        axios.get("/api/v1.0/endpoints/search/getRootEndpoints",{}).then((res: AxiosResponse<any>)=>{
+            resolve(res.data)
         })
     })
+}
+/**
+ * 获取设备组件列表
+ * */
+export function _getcomponet(data){
+    return new Promise(resolve => {
+        axios.get("/api/v1.0/endpoints/search/getEndpointsByParent",{params:data}).then((res: AxiosResponse<Model.ResponseValue<any>>)=>{
+            resolve(res.data)
+        })
+    })
+}
+/**
+ * 获取组件属性列表
+ * */
+export function _getprop(data){
+    return new Promise(resolve => {
+        axios.get("/api/v1.0/variables/search/getAllByEndpointId",{params:data}).then((res: AxiosResponse<Model.ResponseValue<any>>)=>{
+            resolve(res.data)
+        })
+    })
+}
+/**
+ * 获取图形
+ * */
+export function _getchart(data){
+    data.propid='618205d77b5ecc20aaa99657'
+    data.starttime='2021-06-09'
+    data.endtime='2021-09-12'
+    /**
+     * 进一日
+     * */
+    if(data.starttime===data.endtime){
+        return new Promise(resolve => {
+            axios.get("/api/v1.0/trend/hours",{params:{
+                    variableId:data.propid,
+                    date:data.starttime
+                }}).then((res: AxiosResponse<Model.ResponseValue<any>>)=>{
+                resolve(res.data)
+            })
+        })
+    }else{
+        /**
+         * 时间区间
+         * */
+        return new Promise(resolve => {
+            axios.get("/api/v1.0/trend/daily",{params:{
+                    variableId:data.propid,
+                    from:data.starttime,
+                    to:data.endtime
+                }}).then((res: AxiosResponse<Model.ResponseValue<any>>)=>{
+                resolve(res.data)
+            })
+        })
+    }
+
 }
 
 /*
@@ -111,14 +122,184 @@ export function _getchart(data){
 
 export function getMessage(params = {}) {
     return new Promise((resolve, reject) => {
-        axios.get('./mock/message.json', {
-            params: params,
-        }).then((response) => {
-            resolve(response.data);
-            console.log(response.data)
-        }).catch((error) => {
-                reject(error);
-        });
+        // axios.get('./mock/message.json', {
+        //     params: params,
+        // }).then((response) => {
+        //     resolve(response.data);
+        //     console.log(response.data)
+        // }).catch((error) => {
+        //         reject(error);
+        // });
+        resolve([
+            {
+                "id": 1,
+                "name": "SRU路由交换版",
+                "location": "1",
+                "event": "低报",
+                "type": "警告",
+                "time": "2017-07-31 12：33：22"
+            },
+            {
+                "id": 2,
+                "name": "SRU路由交换版",
+                "location": "1",
+                "event": "低报",
+                "type": "警告",
+                "time": "2017-07-31 12：33：22"
+            },
+            {
+                "id": 3,
+                "name": "SRU路由交换版",
+                "location": "1",
+                "event": "低报",
+                "type": "警告",
+                "time": "2017-07-31 12：33：22"
+            },
+            {
+                "id": 4,
+                "name": "SRU路由交换版",
+                "location": "1",
+                "event": "低报",
+                "type": "警告",
+                "time": "2017-07-31 12：33：22"
+            },
+            {
+                "id": 5,
+                "name": "SRU路由交换版",
+                "location": "1",
+                "event": "低报",
+                "type": "警告",
+                "time": "2017-07-31 12：33：22"
+            },
+            {
+                "id": 6,
+                "name": "SRU路由交换版",
+                "location": "1",
+                "event": "低报",
+                "type": "警告",
+                "time": "2017-07-31 12：33：22"
+            },
+            {
+                "id": 7,
+                "name": "SRU路由交换版",
+                "location": "1",
+                "event": "低报",
+                "type": "警告",
+                "time": "2017-07-31 12：33：22"
+            },
+            {
+                "id": 8,
+                "name": "SRU路由交换版",
+                "location": "1",
+                "event": "低报",
+                "type": "警告",
+                "time": "2017-07-31 12：33：22"
+            },
+            {
+                "id": 9,
+                "name": "SRU路由交换版",
+                "location": "1",
+                "event": "低报",
+                "type": "警告",
+                "time": "2017-07-31 12：33：22"
+            },
+            {
+                "id": 10,
+                "name": "SRU路由交换版",
+                "location": "1",
+                "event": "低报",
+                "type": "警告",
+                "time": "2017-07-31 12：33：22"
+            },
+            {
+                "id": 11,
+                "name": "SRU路由交换版",
+                "location": "1",
+                "event": "低报",
+                "type": "警告",
+                "time": "2017-07-31 12：33：22"
+            },
+            {
+                "id": 12,
+                "name": "SRU路由交换版",
+                "location": "1",
+                "event": "低报",
+                "type": "警告",
+                "time": "2017-07-31 12：33：22"
+            },
+            {
+                "id": 13,
+                "name": "SRU路由交换版",
+                "location": "1",
+                "event": "低报",
+                "type": "警告",
+                "time": "2017-07-31 12：33：22"
+            },
+            {
+                "id": 14,
+                "name": "SRU路由交换版",
+                "location": "1",
+                "event": "低报",
+                "type": "警告",
+                "time": "2017-07-31 12：33：22"
+            },
+            {
+                "id": 15,
+                "name": "SRU路由交换版",
+                "location": "1",
+                "event": "低报",
+                "type": "警告",
+                "time": "2017-07-31 12：33：22"
+            },
+            {
+                "id": 16,
+                "name": "SRU路由交换版",
+                "location": "1",
+                "event": "低报",
+                "type": "警告",
+                "time": "2017-07-31 12：33：22"
+            },
+            {
+                "id": 17,
+                "name": "SRU路由交换版",
+                "location": "1",
+                "event": "低报",
+                "type": "警告",
+                "time": "2017-07-31 12：33：22"
+            },
+            {
+                "id": 18,
+                "name": "SRU路由交换版",
+                "location": "1",
+                "event": "低报",
+                "type": "警告",
+                "time": "2017-07-31 12：33：22"
+            },
+            {
+                "id": 19,
+                "name": "SRU路由交换版",
+                "location": "1",
+                "event": "低报",
+                "type": "警告",
+                "time": "2017-07-31 12：33：22"
+            },
+            {
+                "id": 20,
+                "name": "SRU路由交换版",
+                "location": "1",
+                "event": "低报",
+                "type": "警告",
+                "time": "2017-07-31 12：33：22"
+            },
+            {
+                "id": 21,
+                "name": "SRU路由交换版",
+                "location": "1",
+                "event": "低报",
+                "type": "警告",
+                "time": "2017-07-31 12：33：22"
+            }
+        ])
     });
 }
 
