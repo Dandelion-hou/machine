@@ -6,7 +6,7 @@ import {Drawer} from "@material-ui/core";
 import {Selected} from "../component/Selectdevice/Selected";
 import React, {useEffect, useState} from "react";
 import {Nav} from "../component/public/Nav";
-import {_getall} from "../../util/request";
+import {_getall,_getalertnum} from "../../util/request";
 import './main.css';
 export const Main=()=>{
     /*定义设备默认参数*/
@@ -18,6 +18,8 @@ export const Main=()=>{
         num:1,
         banner:[]
     }
+    /*轮播总数*/
+    const [count, setCount] = useState(0);
     /*轮播设备*/
     const [bannerdevice, setBannerdevice] = useState(defaultDevice);
     /*设备列表*/
@@ -46,15 +48,23 @@ export const Main=()=>{
             data=data.map((item)=>{
                 delete item._links
                 item.state=2
-                item.num=1
-                item.banner=['','']
+                item.num=0
+                item.banner=[item.image1,item.image2]
                 return item
             })
-            console.log('data[0].id',data[0].id)
+            setCount(data.length)
             // @ts-ignore
             setMachinelist(data);
-            setBannerdevice(data[0])
             setMachineid(data[0].id)
+            _getalertnum({endpointId:data[0].id}).then(res=>{
+                // @ts-ignore
+                let num=res.payload
+                data[0].num=num
+                if(num>0){
+                    data[0].state=1
+                }
+                setBannerdevice(data[0])
+            })
 
 
         })
@@ -71,10 +81,6 @@ export const Main=()=>{
             onLeave={(index, nextIndex, direction)=>{
                 /*记录切换页面*/
                 setPageindex(nextIndex.index)
-                /*关闭选择弹窗*/
-                // setChooseflag(false)
-                /*关闭选择弹窗*/
-                // setChooseflag(false)
             }}
             render={({ fullpageApi }) => {
                 return (
@@ -90,25 +96,22 @@ export const Main=()=>{
                         </Drawer>
                         <div className="section">
                             <div className="pagecontainer section1-bg">
-                                <Nav  onSelectedChange={()=>handleSelectedChange(true,fullpageApi)}/>
+                                <Nav count={count} onSelectedChange={()=>handleSelectedChange(true,fullpageApi)}/>
                                 <FirstCarousel device={bannerdevice} pageindex={pageindex} fullpage_api={fullpageApi} />
                             </div>
                         </div>
                         <div className="section" >
                             <div className="pagecontainer section2-bg">
-                                <Nav  onSelectedChange={()=>handleSelectedChange(true,fullpageApi)}/>
+                                <Nav count={count} onSelectedChange={()=>handleSelectedChange(true,fullpageApi)}/>
                                 <Charts machineid={machineid} pageindex={pageindex} fullpage_api={fullpageApi} />
                             </div>
                         </div>
                         <div className="section" >
                             <div className="pagecontainer section3-bg">
-                                <Nav  onSelectedChange={()=>handleSelectedChange(true,fullpageApi)}/>
+                                <Nav count={count} onSelectedChange={()=>handleSelectedChange(true,fullpageApi)}/>
                                 <Tableview  />
                             </div>
                         </div>
-                        {/*<div className="section fp-auto-height">*/}
-                        {/*    <Footer />*/}
-                        {/*</div>*/}
                     </>
             );
             }}

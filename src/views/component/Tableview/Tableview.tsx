@@ -19,7 +19,8 @@ import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 import LastPageIcon from '@material-ui/icons/LastPage';
 import Paper from '@material-ui/core/Paper';
 import record from '../../../static/record.png';
-import { getMessage } from '../../../util/request'
+import arrowpng from '../../../static/arrow.png';
+import { _getalertevents } from '../../../util/request'
 
 const Styles = makeStyles((theme) => ({
 
@@ -75,6 +76,19 @@ const Styles = makeStyles((theme) => ({
         background: 'rgba(255, 255, 255,0.05)',
         boxShadow: '0px -1px 0px 0px rgba(65,69,76,1)',
     },
+    arrow: {
+        height: '16px',
+        width: '16px',
+        marginLeft: '5px',
+        verticalAlign: 'text-bottom',
+        filter: 'grayscale(100%)',
+        opacity: 0.6,
+        "&:hover": {
+            cursor: 'pointer',
+            filter: 'none',
+            opacity: 1,
+        }
+    },
     tableRow: {
         height: '46px',
         textAlign: 'center',
@@ -87,7 +101,7 @@ const Styles = makeStyles((theme) => ({
         color: '#fff',
         fontSize: '14px',
         textAlign: 'center',
-        borderBottom: '1px solid #838391'
+        borderBottom: '1px solid #838391',
     },
     tableFooter: {
 
@@ -120,19 +134,16 @@ const Styles = makeStyles((theme) => ({
     }
 }));
 
-function createData(name: string, id: string, location: string, event: string, type: string, time: string) {
-    return { name, id, location, event, type, time };
-}
-let rows = [];
+
 function TableHeader(props) {
     const classes = Styles();
-    const { page, rowsPerPage } = props;
-    const firstRecord = rows.length >= page * rowsPerPage + 1 ? page * rowsPerPage + 1 : 0;
-    const lastRecord = rows.length > (page + 1) * rowsPerPage ? (page + 1) * rowsPerPage : rows.length;
+    const { page, rowsPerPage, totalNum } = props;
+    const firstRecord = totalNum >= page * rowsPerPage + 1 ? page * rowsPerPage + 1 : 0;
+    const lastRecord = totalNum > (page + 1) * rowsPerPage ? (page + 1) * rowsPerPage : totalNum;
     return (
         <div className={classes.tableTitle}>
             <img src={record} alt="" className={classes.record} />
-            <a>告警历史 | 显示第 {firstRecord} 条到第 {lastRecord} 条记录，共 {rows.length} 条记录</a>
+            <a>告警历史 | 显示第 {firstRecord} 条到第 {lastRecord} 条记录，共 {totalNum} 条记录</a>
         </div>
     )
 }
@@ -202,15 +213,17 @@ TablePaginationActions.propTypes = {
 };
 
 
-export default function BasicTable(props) {
+export default function BasicTable() {
     const classes = Styles();
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
-    rows = props.message;
-    console.log(props.message)
+    const [rows, setRows] = React.useState([]);
+    const [totalNum, setTotalNum] = React.useState(0);
+    const [order, setOrder] = React.useState('time');
+
     // Avoid a layout jump when reaching the last page with empty rows.
     const emptyRows =
-        page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+        page > 0 ? Math.max(0, (1 + page) * rowsPerPage - totalNum) : 0;
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -220,37 +233,52 @@ export default function BasicTable(props) {
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
     };
+    const handleOrderByDesc = (event) => {
+        setOrder('desc')
+    }
+    const handleOrderByTime = (event) => {
+        setOrder('time')
+    }
+    useEffect(() => {
+        _getalertevents({ page: page, size: rowsPerPage, sort: order }).then(res => {
+            // 数据清洗
+            // @ts-ignore
+            setTotalNum(res.page.totalElements);
+            // @ts-ignore
+            setRows(res._embedded.alertEvents);
+            console.log(rows);
 
+        })
+    }, [page, rowsPerPage, order])
     return (
         <div>
-            <TableHeader page={page} rowsPerPage={rowsPerPage} />
+            <TableHeader page={page} rowsPerPage={rowsPerPage} totalNum={totalNum} />
             <TableContainer component={Paper} className={classes.tableContainer} >
                 <Table className={classes.table}>
                     <TableHead >
                         <TableRow className={classes.tableHeader}>
                             <TableCell className={classes.tableCell}>设备名称</TableCell>
                             <TableCell align="right" className={classes.tableCell}>ID</TableCell>
-                            <TableCell align="right" className={classes.tableCell}>Location</TableCell>
-                            <TableCell align="right" className={classes.tableCell}>告警事件</TableCell>
+                            <TableCell align="right" className={classes.tableCell} onClick={handleOrderByDesc}>告警描述<img src={arrowpng} alt="" className={classes.arrow} /></TableCell>
                             <TableCell align="right" className={classes.tableCell}>告警类型</TableCell>
-                            <TableCell align="right" className={classes.tableCell}>告警时间</TableCell>
+                            <TableCell align="right" className={classes.tableCell} onClick={handleOrderByTime}>告警时间<img src={arrowpng} alt="" className={classes.arrow} /></TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {(rowsPerPage > 0
+                        {/* {(rowsPerPage > 0
                             ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                             : rows
-                        ).map((row) => (
+                        )*/}
+                        {rows.map((row) => (
                             <TableRow
-                                key={row.id}
+                                key={row.variableId}
                                 className={classes.tableRow}
                             >
                                 <TableCell component="th" scope="row" className={classes.tableCell}>
-                                    {row.name}
+                                    {row.properties.endpointName}
                                 </TableCell>
-                                <TableCell align="right" className={classes.tableCell}>{row.id}</TableCell>
-                                <TableCell align="right" className={classes.tableCell}>{row.location}</TableCell>
-                                <TableCell align="right" className={classes.tableCell}>{row.event}</TableCell>
+                                <TableCell align="right" className={classes.tableCell}>{row.properties.uid}</TableCell>
+                                <TableCell align="right" className={classes.tableCell}>{row.description}</TableCell>
                                 <TableCell align="right" className={classes.tableCell}>{row.type}</TableCell>
                                 <TableCell align="right" className={classes.tableCell}>{row.time}</TableCell>
                             </TableRow>
@@ -267,7 +295,7 @@ export default function BasicTable(props) {
                             <TablePagination
                                 rowsPerPageOptions={[5, 10, 25, { label: 'All', value: rows.length }]}
                                 colSpan={6}
-                                count={rows.length}
+                                count={totalNum}
                                 rowsPerPage={rowsPerPage}
                                 page={page}
                                 SelectProps={{
@@ -292,20 +320,12 @@ export default function BasicTable(props) {
 
 export const Tableview = (props) => {
     const classes = Styles();
-    const [message, setMessage] = useState([]);
-    useEffect(() => {
-        getMessage({ id: props.machineid }).then(res => {
-            // @ts-ignore
-            setMessage(res);
-        });
-    }, [props.machineid])
-
     return (
         <div className={classes.page}>
             <div className={classes.title}>报警历史</div>
             <div className={classes.tableView}>
                 <div>
-                    <BasicTable message={message} />
+                    <BasicTable />
                 </div>
             </div>
         </div>

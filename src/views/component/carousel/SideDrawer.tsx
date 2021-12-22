@@ -14,8 +14,7 @@ import TableCell from "@material-ui/core/TableCell";
 import TableBody from "@material-ui/core/TableBody";
 import Accordion from '@material-ui/core/Accordion';
 import closeIcon from "../../../static/close.png";
-import {_getallcomponet} from "../../../util/request";
-import {_getprop} from "../../../util/request";
+import {_getallcomponet,_getprop,_getalertnums} from "../../../util/request";
 const useStyles = makeStyles({
   override:{
     backgroundColor: 'rgba(29,34,39,0.60)',
@@ -92,21 +91,35 @@ const useStyles = makeStyles({
 export default function SwipeableTemporaryDrawer(props) {
   /*组件列表*/
   const [component, setComponent] = useState([]);
-
+  //初始化
   useEffect( ()=> {
     _getallcomponet({endpointId: props.machineid}).then(res=>{
       // 数据清洗
       // @ts-ignore
       let data=res.payload
+      let endpointIds=[]
       data=data.map((item)=>{
         delete item.parent
         delete item.location
-        item.state=1
+        endpointIds.push(item.id)
+        item.state=0
         item.content=[]
         item.load=false
         return item
       })
       setComponent(data)
+
+      _getalertnums({endpointIds:endpointIds.join(',')}).then(res=>{
+        for(let obj of data){
+          // @ts-ignore
+          if(res.payload[obj.id]>0){
+            // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+            obj.state=1
+          }
+        }
+        console.log([...data])
+        setComponent([...data])
+      })
     })
   },[props.machineid])
 

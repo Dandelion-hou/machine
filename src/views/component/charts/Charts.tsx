@@ -1,13 +1,19 @@
 import { makeStyles } from '@material-ui/core/styles';
 import ReactEcharts from  'echarts-for-react';
 import React, {useEffect, useState} from 'react';
-import { _getchart,  _getprop, _getcomponet} from "../../../util/request";
+import {_getchart, _getprop, _getcomponet, _getall} from "../../../util/request";
 import FormControl from "@material-ui/core/FormControl";
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import {Mouse} from "../public/Mouse";
+import 'antd/dist/antd.css';
+import { CaretDownOutlined } from '@ant-design/icons';
+import { Cascader } from 'antd';
 const lodash = require('lodash');//深拷贝
 const echarts = require('echarts/lib/echarts');
+
+
+
 const option_default = {
     xAxis: {
         type: 'category',
@@ -71,7 +77,7 @@ const option_default = {
 const Styles = makeStyles((theme) => ({
     selectcomp:{
         display:'flex',
-        justifyContent: 'flex-end',
+        justifyContent: 'flex-start',
         paddingRight:'0.9vw'
     },
     FormControl:{
@@ -101,6 +107,7 @@ const Styles = makeStyles((theme) => ({
             paddingRight:'0',
         },
 
+
     },
     fullpage:{
         width:'100vw',
@@ -128,6 +135,9 @@ const Styles = makeStyles((theme) => ({
         boxSizing:'border-box',
         margin:'0 auto',
     },
+    down:{
+        color:"#ccc"
+    }
 }));
 
 const formatTime = date => {
@@ -156,30 +166,29 @@ const inittime=()=>{
     ]
 }
 export const Charts= (props) => {
-    /**/
-    const [option, setOption] = useState(option_default);
-    /*机器分类*/
+    /*图表默认配置*/
+    const [option,setOption]=useState(option_default)
+    /*设备分类*/
     const [machine,setMachine]=useState([])
-    const [machineindex,setMachineindex]=useState(-1)
     const [showmachine,setShowmachine]=useState(false)
-    const [machinevalue,setMachinevalue]=useState('')
+
     /*筛选属性*/
     const [prop,setProp]=useState([])
     const [propindex,setPropindex]=useState(-1)
     const [showprop,setShowprop]=useState(false)
-    const [refreshflag,setRefreshflag]=useState(false)
     const [propvalue,setPropvalue]=useState('')
+
     /*筛选时间*/
     const time=inittime()
     const [timeindex,setTimeindex]=useState(-1)
     const [showtime,setShowtime]=useState(false)
     const [timevalue,setTimevalue]=useState('')
+
     const refreshoption=async ()=>{
-        let machineid=machine[machineindex].id
-        let propid=prop[propindex].id
         let starttime=time[timeindex].starttime
         let endtime=time[timeindex].endtime
-        let chartdata=await _getchart({machineid,propid,starttime,endtime})
+        let variableId=prop[propindex].id
+        let chartdata=await _getchart({variableId,starttime,endtime})
         // @ts-ignore
         if(chartdata.result!=='success'){
             return
@@ -194,6 +203,15 @@ export const Charts= (props) => {
         new_option.series[0].data=y_data
         setOption(new_option)
     }
+
+
+
+
+    /*初始化*/
+    useEffect(()=>{
+        init()
+    },[])
+
     /*
     *重新绘图
     * */
@@ -203,106 +221,6 @@ export const Charts= (props) => {
         }
     },[propindex,timeindex])
 
-    /*触发条件重置*/
-    useEffect(()=>{
-        if(props.pageindex===1){
-            /*section1显示*/
-            reset()
-        }else{
-            setRefreshflag(true);
-        }
-    },[props.machineid])
-    /*触发条件重置*/
-    useEffect(()=>{
-        if(props.pageindex===1&&refreshflag){
-            /*section1显示*/
-            reset()
-            setRefreshflag(false)
-        }
-    },[props.pageindex])
-    /*
-    * 选择设备刷新当前页面状态
-    * 重新请求二级分类
-    * 清空充值选择项
-    * 重置图
-    */
-    const reset=async ()=>{
-        /*重新请求二级分类-以及属性*/
-        let machinelist=await _getcomponet({parentId: props.machineid})
-        console.log('machinelist',machinelist)
-        // 数据清洗
-        // @ts-ignore
-        let machineitem=machinelist._embedded.endpoints
-        machineitem=machineitem.map((item)=>{
-            delete item._links
-            item.content=[]
-            item.load=false
-            return item
-        })
-        let propslist=await _getprop({endpointId:machineitem[0].id,size:1000})
-        // 数据清洗
-        // @ts-ignore
-        let propsitem=propslist._embedded.variables
-        propsitem=propsitem.map((item)=>{
-            delete item._links
-            return item
-        })
-        // @ts-ignore
-        setMachine(machineitem)
-        setMachineindex(0)
-        // @ts-ignore
-        setProp(propsitem)
-        setPropvalue('')
-        setPropindex(-1)
-        setTimevalue('')
-        setTimeindex(-1)
-        /*重置图*/
-        let new_option=lodash.cloneDeep(option_default)
-        setOption(new_option)
-    }
-    /*
-     * 二级分类改变事件
-     * */
-    const handleShowMachineChange=()=>{
-        props.fullpage_api.setAllowScrolling(showmachine);
-        setShowmachine(!showmachine)
-    }
-    const handleMachineChange=async (event)=>{
-        console.log(event)
-        let machineindex=machine.findIndex(item=>{
-            return item.displayName===event.displayName
-        })
-        props.fullpage_api.setAllowScrolling(true);
-        setMachinevalue(event.displayName)
-        setShowmachine(false)
-        setMachineindex(machineindex)
-        let propslist=await _getprop({endpointId:machine[machineindex].id,size:1000})
-        // 数据清洗
-        // @ts-ignore
-        let propsitem=propslist._embedded.variables
-        propsitem=propsitem.map((item)=>{
-            delete item._links
-            return item
-        })
-        // @ts-ignore
-        setProp(propsitem)
-        setPropvalue('')
-        setTimevalue('')
-        setPropindex(-1)
-        setTimeindex(-1)
-        /*重置图*/
-        let new_option=lodash.cloneDeep(option_default)
-        setOption(new_option)
-    }
-    /*
-     * 关闭所有
-     * */
-    const closeallselect=()=>{
-        setShowprop(false)
-        setShowtime(false)
-        setShowmachine(false)
-        props.fullpage_api.setAllowScrolling(true);
-    }
     /*
      * 属性改变事件
      * */
@@ -319,6 +237,90 @@ export const Charts= (props) => {
         setPropvalue(event.name)
         setPropindex(propindex)
     }
+
+
+    /*
+    * 获取跟设备
+    */
+    const init=async ()=>{
+        _getall({}).then(res=>{
+            // 数据清洗
+            // @ts-ignore
+            let data=res._embedded.endpoints
+            data=data.map((item)=>{
+                return {
+                    id:item.id,
+                    value: item.displayName,
+                    label: item.displayName,
+                    loading:false,
+                    isLeaf: false
+                }
+            })
+            setMachine(data)
+        })
+    }
+    /*
+    * 加载子分类事件
+    * */
+    const loadData = async (selectedOptions) => {
+        const targetOption = selectedOptions[selectedOptions.length - 1];
+        targetOption.loading = true;
+        let machinelist=await _getcomponet({parentId: targetOption.id})
+        // 数据清洗
+        // @ts-ignore
+        let machineitem=machinelist._embedded.endpoints
+        targetOption.loading = false;
+        targetOption.children = machineitem.map((item)=>{
+            return {
+                id:item.id,
+                value: item.displayName,
+                label: item.displayName,
+                loading:false,
+                isLeaf: false
+            }
+        })
+
+        targetOption.children.unshift({
+            id:targetOption.id,
+            value: targetOption.value,
+            label: targetOption.label,
+            isLeaf: true,
+            loading:false,
+        })
+        setMachine([...machine]);
+    };
+
+
+    const handleMachineChange=async (value, selectedOptions)=>{
+        props.fullpage_api.setAllowScrolling(true);
+        console.log('value',value, 'selectedOptions',selectedOptions);
+        let machineid=selectedOptions[selectedOptions.length-1].id
+        let propslist=await _getprop({endpointId: machineid,size:1000})
+        // 数据清洗
+        // @ts-ignore
+        let propsitem=propslist.payload
+        propsitem=propsitem.map((item)=>{
+            return item
+        })
+        setProp(propsitem)
+        setPropvalue('')
+        setPropindex(-1)
+        setTimevalue('')
+        setTimeindex(-1)
+        /*重置图*/
+        let new_option=lodash.cloneDeep(option_default)
+        setOption(new_option)
+    }
+    /*
+     * 关闭所有
+     * */
+    const closeallselect=()=>{
+        setShowprop(false)
+        setShowtime(false)
+        setShowmachine(false)
+        props.fullpage_api.setAllowScrolling(true);
+    }
+
     /*
      * 时间改变事件
      * */
@@ -335,30 +337,29 @@ export const Charts= (props) => {
         setTimevalue(event.title)
         setTimeindex(timeindex)
     }
+    // Just show the latest item.
+    function displayRender(label) {
+        return label[label.length - 1];
+    }
 
     const classes = Styles();
     return (
         <div>
-            <div className={classes.fullpage} style={{display:(showtime||showprop||showmachine)?'block':'none'}} onClick={()=>closeallselect()}></div>
+            <div className={classes.fullpage} style={{display:(showtime||showmachine)?'block':'none'}} onClick={()=>closeallselect()}></div>
             <div className={classes.title}>设备趋势</div>
             <div className={classes.container}>
                 <div className={classes.selectcomp}>
+
                     <FormControl className={classes.FormControl}>
-                        {/*设备二级分类*/}
-                        <Autocomplete
-                            id="grouped-demo-1"
+                        <Cascader
                             options={machine}
-                            disabled={true}
-                            selectOnFocus
-                            open={showmachine}
-                            onChange={(e,newValue)=>handleMachineChange(newValue)}
-                            getOptionLabel={(option) => option.displayName}
-                            className={classes.autocomplete}
-                            closeIcon={null}
-                            inputValue={machinevalue}
-                            renderInput={(params) => <TextField {...params}  placeholder={'请选择'}  className={classes.color} disabled={true} />}
-                        />
-                        <div className={classes.occupy} onClick={()=>handleShowMachineChange()}></div>
+                            loadData={loadData}
+                            suffixIcon={
+                                <CaretDownOutlined className={classes.down} />
+                            }
+                            onChange={handleMachineChange}
+                            displayRender={displayRender}
+                            placeholder="Please select" />
                     </FormControl>
                     <FormControl className={classes.FormControl}>
                         {/*设备属性*/}

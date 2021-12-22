@@ -37,3 +37,13 @@
 .section2-bg{
     background-image: linear-gradient(1deg, #13181F 0%, #13181F 58%);
 }
+.ant-select{
+    color: #999;
+}
+.ant-select:not(.ant-select-customize-input) .ant-select-selector{
+    background: #1E2128;
+    border: 1px solid #41454C;
+}
+.ant-select-selection-placeholder{
+    color: #999;
+}

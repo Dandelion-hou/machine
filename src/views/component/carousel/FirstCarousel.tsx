@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { makeStyles} from '@material-ui/core';
 import Carousel from 'react-material-ui-carousel';
-import frontSide from '../../../static/banner.png';
 import SideDrawer from '../carousel/SideDrawer';
 import {Mouse} from "../public/Mouse";
 import './cycle.css';
@@ -38,7 +37,6 @@ const Styles = makeStyles((theme) => ({
         margin: '6vh auto 0',
         textAlign:'center'
     },
-
     container:{
         height: '70vh',
     },
@@ -57,13 +55,13 @@ const Styles = makeStyles((theme) => ({
     circlebox:{
         position: 'absolute',
         cursor:'pointer',
-        top: '-20px',
-        right: '-20px',
-        width: '40px',
-        height: '40px',
+        top: '-25px',
+        right: '-25px',
+        width: '50px',
+        height: '50px',
         color:'#fff',
         fontFamily: 'PingFangSC-Medium',
-        fontSize: '16px'
+        fontSize: '12px'
     },
     circlecenter:{
         position: 'absolute',
@@ -138,8 +136,7 @@ export const FirstCarousel = (props) => {
                             style: {
                                 background: '#44E7D5',
                             }
-                        }}
-                    >
+                        }}>
                             {props.device.banner.map((item,index)=> {
                                 return (
                                     <div className={classes.container} key={index}>
@@ -151,7 +148,7 @@ export const FirstCarousel = (props) => {
                                                         {props.device.state===1?props.device.num:''}
                                                     </div>
                                                 </div>
-                                                <img alt={props.device.displayName} src={frontSide} className={classes.image}></img>
+                                                <img alt={props.device.displayName} src={item} className={classes.image}></img>
                                             </div>
                                     </div>
                                 )

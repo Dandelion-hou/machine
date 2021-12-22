@@ -2,10 +2,6 @@ import React from 'react';
 import Carousel from 'react-material-ui-carousel';
 import './select.css';
 import closeIcon from '../../../static/close.png';
-import deviceFont from '../../../static/banner.png';
-
-
-
 export const Selected=(props)=>{
     let datatmp=props.machinelist
     const pagesize=4 //每页显示4个
@@ -73,8 +69,8 @@ export const Selected=(props)=>{
                     return (<div className='select-list' key={index}>
                             {item.map((v)=>{
                                 return (<div key={v.id} className='select-item' onClick={()=> props.onChooseMachine(v.id)}>
-                                            <img className='select-image' src={deviceFont} alt={v.title} />
-                                             <div className='select-desc'>{v.title}</div>
+                                            <img className='select-image' src={v.image1} alt={v.displayName} />
+                                             <div className='select-desc'>{v.displayName}</div>
                                 </div>)
                             })}
                         </div>)

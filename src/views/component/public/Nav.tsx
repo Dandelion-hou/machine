@@ -35,12 +35,11 @@ export const Nav = (props) => {
         <div className={classes.navbar}>
                 <div />
                 <div className={classes.right} onClick={()=>clickbtn()}>
-                        <Badge badgeContent={4}
+                        <Badge badgeContent={props.count}
                                anchorOrigin={{
                                     vertical: 'top',
                                     horizontal: 'right',
                                }}
-
                         >
                             <img
                                 className={classes.database}
