@@ -62,6 +62,18 @@ export function _getall(data){
 /**
  * 获取设备组件列表
  * */
+export function _getallcomponet(data){
+    return new Promise(resolve => {
+        axios.get("/api/v1.0/endpoints/getAllEndpointsByParent",{params:data}).then((res: any)=>{
+            if(res.data.errorCode==='500') res.data.payload=[]
+            resolve(res.data)
+        })
+    })
+}
+
+/**
+ * 获取设备组件列表
+ * */
 export function _getcomponet(data){
     return new Promise(resolve => {
         axios.get("/api/v1.0/endpoints/search/getEndpointsByParent",{params:data}).then((res: AxiosResponse<Model.ResponseValue<any>>)=>{
@@ -83,9 +95,9 @@ export function _getprop(data){
  * 获取图形
  * */
 export function _getchart(data){
-    data.propid='618205d77b5ecc20aaa99657'
-    data.starttime='2021-06-09'
-    data.endtime='2021-09-12'
+    // data.propid='618205d77b5ecc20aaa99657'
+    // data.starttime='2021-06-09'
+    // data.endtime='2021-09-12'
     /**
      * 进一日
      * */

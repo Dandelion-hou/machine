@@ -14,7 +14,7 @@ import TableCell from "@material-ui/core/TableCell";
 import TableBody from "@material-ui/core/TableBody";
 import Accordion from '@material-ui/core/Accordion';
 import closeIcon from "../../../static/close.png";
-import {_getcomponet} from "../../../util/request";
+import {_getallcomponet} from "../../../util/request";
 import {_getprop} from "../../../util/request";
 const useStyles = makeStyles({
   override:{
@@ -94,12 +94,13 @@ export default function SwipeableTemporaryDrawer(props) {
   const [component, setComponent] = useState([]);
 
   useEffect( ()=> {
-    _getcomponet({parentId: props.machineid}).then(res=>{
+    _getallcomponet({endpointId: props.machineid}).then(res=>{
       // 数据清洗
       // @ts-ignore
-      let data=res._embedded.endpoints
+      let data=res.payload
       data=data.map((item)=>{
-        delete item._links
+        delete item.parent
+        delete item.location
         item.state=1
         item.content=[]
         item.load=false
@@ -114,11 +115,12 @@ export default function SwipeableTemporaryDrawer(props) {
       return item.id===id
     })
     if(component[index].load) return
+    const newComponent = [...component]
     _getprop({endpointId: id,size:1000}).then(res=>{
       // 数据清洗
       // @ts-ignore
       let data=res._embedded.variables
-      component[index].content=data.map((item)=>{
+      newComponent[index].content=data.map((item)=>{
         delete item._links
         item.low=0
         item.high=0
@@ -126,8 +128,8 @@ export default function SwipeableTemporaryDrawer(props) {
         item.month=0
         return item
       })
-      component[index].load=true
-      setComponent(component)
+      newComponent[index].load=true
+      setComponent(newComponent)
     })
   };
   const classes = useStyles();
@@ -157,25 +159,25 @@ export default function SwipeableTemporaryDrawer(props) {
                     <Table className={classes.table} aria-label="simple table">
                       <TableHead>
                         <TableRow className={classes.tableRow}>
-                          <TableCell className={classes.tableCell}></TableCell>
-                          <TableCell align="right" className={classes.tableCell}></TableCell>
-                          <TableCell align="right" className={classes.tableCell}>低报值</TableCell>
-                          <TableCell align="right" className={classes.tableCell}>高报值</TableCell>
-                          <TableCell align="right" className={classes.tableCell}>周值特征</TableCell>
-                          <TableCell align="right" className={classes.tableCell}>月值特征</TableCell>
+                          <TableCell className={classes.tableCell}>属性</TableCell>
+                          <TableCell align="right" className={classes.tableCell}>属性值</TableCell>
+                          {/*<TableCell align="right" className={classes.tableCell}>低报值</TableCell>*/}
+                          {/*<TableCell align="right" className={classes.tableCell}>高报值</TableCell>*/}
+                          {/*<TableCell align="right" className={classes.tableCell}>周值特征</TableCell>*/}
+                          {/*<TableCell align="right" className={classes.tableCell}>月值特征</TableCell>*/}
                         </TableRow>
                       </TableHead>
                       <TableBody>
                         {block.content.map((row) => (
                             <TableRow key={row.id}>
                               <TableCell className={classes.tableCell} component="th" scope="row">
-                                {row.name}123
+                                {row.name}
                               </TableCell>
                               <TableCell align="right" className={classes.tableCell}>{row.value}</TableCell>
-                              <TableCell align="right" className={classes.tableCell}>{row.low}</TableCell>
-                              <TableCell align="right" className={classes.tableCell}>{row.high}</TableCell>
-                              <TableCell align="right" className={classes.tableCell}>{row.week}</TableCell>
-                              <TableCell align="right" className={classes.tableCell}>{row.month}</TableCell>
+                              {/*<TableCell align="right" className={classes.tableCell}>{row.low}</TableCell>*/}
+                              {/*<TableCell align="right" className={classes.tableCell}>{row.high}</TableCell>*/}
+                              {/*<TableCell align="right" className={classes.tableCell}>{row.week}</TableCell>*/}
+                              {/*<TableCell align="right" className={classes.tableCell}>{row.month}</TableCell>*/}
                             </TableRow>
                         ))}
                       </TableBody>
